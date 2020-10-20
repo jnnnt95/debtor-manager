@@ -100,15 +100,6 @@ public class Writer {
         workbook.close();
     }
     
-    /*public static void addClient(Client client) throws IOException {
-        String line;
-        line = client.getId() + "|" + client.getName() + "|" + client.getNick() + "|" + client.getArea();
-        
-        Charset utf8 = StandardCharsets.UTF_8;
-        Files.write(Paths.get("Data\\clients"), Arrays.asList(line), utf8,
-            StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    }*/
-    
     public static void addClient(Client client) throws ClassNotFoundException, SQLException{
         Connection connection;
         connection = DataDBConnection.getConnection();
@@ -127,43 +118,6 @@ public class Writer {
         
         statement.execute(query);
     }
-    
-    /*public static void writeUpdatedClients(List<Client> clients) throws IOException {
-        writeUpdatedClientsBackup(clients);
-        for(Client client : clients) {
-            String line;
-            line = client.getId() + "|" + client.getName() + "|" + client.getNick() + "|" + client.getArea();
-            Charset utf8 = StandardCharsets.UTF_8;
-            Files.write(Paths.get("Data\\clients"), Arrays.asList(line), utf8,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        }
-    }*/
-    
-    /*private static void writeUpdatedClientsBackup(List<Client> clients) throws IOException {
-        for(Client client: clients) {
-            String line;
-            line = client.getId() + "|" + client.getName() + "|" + client.getNick() + "|" + client.getArea();
-            Charset utf8 = StandardCharsets.UTF_8;
-            Files.write(Paths.get("Data\\temp\\clients_b"), Arrays.asList(line), utf8,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        }
-        Files.delete(Paths.get("Data\\clients"));
-    }*/
-    
-    /*public static void writeClientDebtsBackUp(List<Debt> debts, int clientId) throws IOException {
-        List<String> lines;
-        lines = generateDebtLines(debts);
-        Charset utf8 = StandardCharsets.UTF_8;
-        Files.write(Paths.get("Data\\temp\\" + clientId), lines, utf8);
-        Files.delete(Paths.get("Data\\debts\\" + clientId));
-    }*/
-    
-    /*public static void writeClientDebts(List<Debt> debts, int clientId) throws IOException {
-        List<String> lines;
-        lines = generateDebtLines(debts);
-        Charset utf8 = StandardCharsets.UTF_8;
-        Files.write(Paths.get("Data\\debts\\" + clientId), lines, utf8);
-    }*/
     
     public static void addDebt(Debt debt, Client client) throws ClassNotFoundException, SQLException {
         Connection connection;
@@ -195,48 +149,6 @@ public class Writer {
         statement.execute(query);
     }
     
-    /*private static void appendClientDebts(List<Debt> debts, int clientId) throws IOException {
-        List<String> lines;
-        lines = generateDebtLines(debts);
-        Charset utf8 = StandardCharsets.UTF_8;
-        Files.write(Paths.get("Data\\debts\\" + clientId), lines, utf8,
-            StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    }*/
-    
-    /*private static List<String> generateDebtLines(List<Debt> debts) {
-        List<String> returnable;
-        returnable = new ArrayList<>();
-        
-        for(Debt debt: debts) {
-            String line;
-            line = debt.getBalance() + "|" + debt.getDeposit() + "|" + debt.getDate();
-            returnable.add(line);
-        }
-        
-        return returnable;
-    }*/
-
-    /*public static void modifyClient(Client client) throws IOException, ParseException, ClassNotFoundException, SQLException {
-        List<Client> newClientList;
-        newClientList = excludeClient(client.getId());
-        
-        boolean added;
-        added = false;
-        
-        for(int i = 0; i < newClientList.size(); i++) {
-            if((client.getId() - newClientList.get(i).getId()) < 0
-                    &&
-                !added) {
-                newClientList.add(i, client);
-                added = true;
-            }
-        }
-        
-        if(!added) {
-            newClientList.add(client);
-        }
-    }*/
-    
     public static void modifyClient(Client client) throws ParseException, ClassNotFoundException, SQLException {
         Connection connection;
         connection = DataDBConnection.getConnection();
@@ -251,20 +163,4 @@ public class Writer {
         
         statement.execute(query);
     }
-    
-    /*private static List<Client> excludeClient(int id) throws IOException, ParseException, ClassNotFoundException, SQLException {
-        List<Client> newClientList;
-        newClientList = new ArrayList<>();
-        
-        List<Client> clients;
-        clients = Reader.getClients();
-        
-        for(Client client: clients) {
-            if(!(client.getId() == id)) {
-                newClientList.add(client);
-            }
-        }
-        
-        return newClientList;
-    }*/
 }

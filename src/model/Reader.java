@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,60 +23,6 @@ public class Reader {
     public static void openExportedData() throws IOException {
         Desktop.getDesktop().open(new File("C:\\Debtor Manager\\printable data.xls"));
     }
-
-    /*
-    public static List<Client> getClients() throws IOException, ParseException {
-        List<String> rawClients = getRawClients();
-        List<Client> clients;
-        clients = new ArrayList<>();
-
-        if(updateNecessary()) {
-            for (String rawClient : rawClients) {
-                String[] filteredData;
-                filteredData = dataFilter(rawClient);
-                Client client;
-
-                if(filteredData.length < 4) {
-                    client = new Client(
-                            Integer.parseInt(filteredData[0]),
-                            filteredData[1],
-                            filteredData[2],
-                            "",
-                            getClientDebts(Integer.parseInt(filteredData[0]))
-                    );
-                }
-                else {
-                    client = new Client(
-                            Integer.parseInt(filteredData[0]),
-                            filteredData[1],
-                            filteredData[2],
-                            filteredData[3],
-                            getClientDebts(Integer.parseInt(filteredData[0]))
-                    );
-                }
-                clients.add(client);
-            }
-            Writer.writeUpdatedClients(clients);
-        }
-        else {
-            for (String rawClient : rawClients) {
-                String[] filteredData;
-                filteredData = dataFilter(rawClient);
-                Client client;
-
-                client = new Client(
-                        Integer.parseInt(filteredData[0]),
-                        filteredData[1],
-                        filteredData[2],
-                        filteredData[3],
-                        getClientDebts(Integer.parseInt(filteredData[0]))
-                );
-                clients.add(client);
-            }
-        }
-
-        return clients;
-    }*/
     
     public static List<Client> getClients() throws IOException, ParseException, ClassNotFoundException, SQLException {
         ResultSet rawClients = getRawClients();
@@ -101,30 +46,6 @@ public class Reader {
         return clients;
     }
     
-    /*public static boolean updateNecessary() throws IOException {
-        List<String> samples;
-        samples = getRawClients();
-        String counter[];
-        for(String sample: samples) {
-            counter = sample.split(Pattern.quote("|"));
-            if (counter.length < 4) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
-
-    /*private static String[] dataFilter(String data) {
-        String[] returnable;
-        returnable = data.split(Pattern.quote("|"));
-        return returnable;
-    }*/
-
-    /*private static List<String> getRawClients() throws IOException {
-        return Files.readAllLines(Paths.get("Data\\clients"));
-    }*/
-    
     private static ResultSet getRawClients() throws IOException, ClassNotFoundException, SQLException {
         List<String> rawClients;
         rawClients = new ArrayList<>();
@@ -139,31 +60,6 @@ public class Reader {
         
         return result;
     }
-
-    /*private static List<Debt> getClientDebts(int clientId) throws IOException {
-        List<String> rawDebts = getRawDebts(clientId);
-        List<Debt> debts;
-        debts = new ArrayList<>();
-
-        for (String rawDebt : rawDebts) {
-            String[] filteredData;
-            filteredData = dataFilter(rawDebt);
-            Debt debt;
-            debt = new Debt(
-                    //Client id
-                    clientId,
-                    //Balance
-                    Integer.parseInt(filteredData[0]),
-                    //Deposit
-                    Integer.parseInt(filteredData[1]),
-                    //Debt date
-                    filteredData[2]
-            );
-            debts.add(debt);
-        }
-
-        return debts;
-    }*/
     
     private static List<Debt> getClientDebts(int clientId) throws IOException, ClassNotFoundException, SQLException {
         ResultSet rawDebts = getRawDebts(clientId);
@@ -221,19 +117,6 @@ public class Reader {
         
         return result.getInt(1) + 1;
     }
-
-    /*private static List<String> getRawDebts(int clientId) throws IOException {
-        List<String> rawDebts;
-        rawDebts = new ArrayList<>();
-
-        try {
-            rawDebts = Files.readAllLines(Paths.get("Data\\debts\\" + clientId));
-        } catch (java.nio.file.NoSuchFileException ex) {
-            Writer.writeClientDebts(new ArrayList<>(), clientId);
-        }
-
-        return rawDebts;
-    }*/
     
     private static ResultSet getRawDebts(int clientId) throws IOException, ClassNotFoundException, SQLException {
         List<String> rawDebts;
