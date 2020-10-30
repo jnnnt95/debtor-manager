@@ -3,7 +3,7 @@ package control;
 import model.Client;
 import java.awt.Color;
 import java.awt.Component;
-import model.Reader;
+import model.IO.Reader;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -23,27 +23,24 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import jxl.write.WriteException;
-import model.Writer;
-import view.QueryClientView;
+import model.IO.Writer;
+import view.full_size_view.QueryClientView;
 
 public class QueryClientController {
     private List<Client> clients;
     private QueryClientView view;
-    private MenuController parent;
     private ClientInfoController son;
     private Client activeClient;
     private DecimalFormat amountFormater;
     private String sessionKey;
-    private LogInController parentLogIn;
         
     
-    public QueryClientController(LogInController parentLogIn, String sessionKey) throws IOException, ParseException, ClassNotFoundException, SQLException {
-        this.parentLogIn = parentLogIn;
+    public QueryClientController(String sessionKey) throws IOException, ParseException, ClassNotFoundException, SQLException {
         this.sessionKey = sessionKey;
         view = new QueryClientView();
         amountFormater = new DecimalFormat("###,###.##");
         activeClient = null;
-        son = new ClientInfoController(parentLogIn, sessionKey);
+        son = new ClientInfoController(sessionKey);
         initView();
     }
     
@@ -52,9 +49,8 @@ public class QueryClientController {
         return view;
     }
     
-    public void setViewData(MenuController parent) throws IOException, ParseException, ClassNotFoundException, SQLException {
+    public void setViewData() throws IOException, ParseException, ClassNotFoundException, SQLException {
         verifySession();
-        this.parent = parent;
         update();
     }
     
@@ -90,12 +86,6 @@ public class QueryClientController {
                 }
             }
         });
-        view.exitButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
         view.resultTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if(e.getClickCount() == 2){
@@ -113,9 +103,12 @@ public class QueryClientController {
                     clients.remove(null);
                 
                     try {
-                        showClientInfo(activeClient);
+                        MainController.changeToClientInfoMode(activeClient, sessionKey);
                     } catch (ParseException ex) {
-                        Logger.getLogger(QueryClientController.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(QueryClientController.class.getName()).
+                                log(Level.SEVERE,
+                                null,
+                                ex);
                     }
                 }
             }
@@ -132,17 +125,6 @@ public class QueryClientController {
                 }
             }
         });
-        view.cancelButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                tools.swapWindow(parent.getView(), view);
-            }
-        });
-    }
-    
-    private void showClientInfo(Client activeClient) throws ParseException {
-        son.setViewData(this, activeClient);
-        tools.swapWindow(son.getView(), view);
     }
     
     public void setSearchTable() {
@@ -184,7 +166,7 @@ public class QueryClientController {
     
     private void setClientsAsResult(List<Client> matches) {
         Object[][] objectMatrix;
-        objectMatrix = new Object[matches.size()][6];
+        objectMatrix = new Object[matches.size()][7];
         
         for(int i = 0; i < matches.size(); i++) {
             objectMatrix[i][0] = matches.get(i).getId();
@@ -192,17 +174,18 @@ public class QueryClientController {
             objectMatrix[i][2] = matches.get(i).getName();
             objectMatrix[i][3] = matches.get(i).getCPNumber();
             objectMatrix[i][4] = matches.get(i).getArea();
-            objectMatrix[i][5] = "$ " + amountFormater.format(matches.get(i).getTotalNotPaidBalance());
+            objectMatrix[i][5] = matches.get(i).getCreatedBy();
+            objectMatrix[i][6] = "$ " + amountFormater.format(matches.get(i).getTotalNotPaidBalance());
         }
         
         DefaultTableModel model = new DefaultTableModel(
                 objectMatrix,
                 new String [] {
-                "Id", "Nick", "Nombre", "Teléfono", "Área", "Total deuda"
+                "Id", "Nick", "Nombre", "Teléfono", "Área", "Creado por", "Total deuda"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -211,6 +194,7 @@ public class QueryClientController {
             
             Class[] types = new Class [] {
                 java.lang.Integer.class,
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -237,7 +221,8 @@ public class QueryClientController {
         view.resultTable.getTableHeader().setResizingAllowed(false);
         view.resultTable.getTableHeader().setReorderingAllowed(false);
         view.resultTable.getColumnModel().getColumn(0).setPreferredWidth(15);
-        view.resultTable.getColumnModel().getColumn(5).setPreferredWidth(15);
+        view.resultTable.getColumnModel().getColumn(3).setPreferredWidth(15);
+        view.resultTable.getColumnModel().getColumn(6).setPreferredWidth(15);
         
         TableColumnModel columns;
         columns = view.resultTable.getColumnModel();
@@ -326,6 +311,6 @@ public class QueryClientController {
     }
     
     private void verifySession() {
-        parentLogIn.verifySession(sessionKey);
+        MainController.authenticate(sessionKey);
     }
 }

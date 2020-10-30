@@ -17,26 +17,23 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import java.util.List;
-import model.Reader;
-import model.Writer;
-import view.AddDebtView;
+import model.IO.Reader;
+import model.IO.Writer;
+import view.pop_up_view.AddDebtView;
 /**
  *
  * @author admin
  */
 public class AddDebtController {
     private final AddDebtView view;
-    private ClientInfoController parent;
     private Client client;
     private List<Integer> debts;
     private double mean;
     private double standardDeviation;
     private DecimalFormat amountFormater;
     private String sessionKey;
-    private LogInController parentLogIn;
     
-    public AddDebtController(LogInController parentLogIn, String sessionKey) {
-        this.parentLogIn = parentLogIn;
+    public AddDebtController(String sessionKey) {
         this.sessionKey = sessionKey;
         view = new AddDebtView();
         amountFormater = new DecimalFormat("###,###.##");
@@ -44,10 +41,8 @@ public class AddDebtController {
         initView();
     }
     
-    public void setViewData(ClientInfoController parent,
-            Client currentClient) {
+    public void setViewData(Client currentClient) {
         verifySession();
-        this.parent = parent;
         this.client = currentClient;
         this.debts = getDebts();
         mean = client.getMean();
@@ -57,18 +52,27 @@ public class AddDebtController {
         
         view.clientLabel.setText(client.getName() + ", " + client.getNick());
         view.totalNotPaidBalanceLabel.setText("$" + amountFormater.format(client.getTotalNotPaidBalance()));
+        
+        view.warningLabel.setVisible(client.isDefaulter());
     }
     
     private void initView() {
         verifySession();
-        view.exitButton.addActionListener(new AbstractAction() {
+        view.amountField.setText("");
+        view.cancelButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Esta nueva deuda no será agregada para este cliente");
-                System.exit(0);
+                try {
+                    MainController.changeToClientInfoMode(client,
+                            sessionKey);
+                } catch (ParseException ex) {
+                    Logger.getLogger(AddDebtController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                }
             }
         });
-        
         view.addDebtButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -103,7 +107,7 @@ public class AddDebtController {
                 }
             }
         });
-        view.newDebtField.addKeyListener(new KeyAdapter() {
+        view.amountField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent event) {
                 if(event.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -121,21 +125,6 @@ public class AddDebtController {
                 }
             }
         });
-        view.cancelButon.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    goBack();
-                } catch (ParseException ex) {
-                    Logger.getLogger(AddDebtController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
-    
-    private void goBack() throws ParseException {
-        parent.setInfoData();
-        tools.swapWindow(parent.getView(), view);
     }
     
     private void addDebt() throws IOException, ParseException, ClassNotFoundException, SQLException {
@@ -147,7 +136,7 @@ public class AddDebtController {
                 DateFormat dateFormat;
                 dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-                newDebtAmount = Integer.parseInt(view.newDebtField.getText().trim());
+                newDebtAmount = Integer.parseInt(view.amountField.getText().trim());
                 if(newDebtAmount <= 0) {
                     JOptionPane.showMessageDialog(null, "Cantidad no válida");
                     throw new NumberFormatException();
@@ -162,15 +151,19 @@ public class AddDebtController {
                         client.getId(),
                         newDebtAmount,
                         0,
-                        date
+                        date,
+                        null,
+                        MainController.getUser().getName(),
+                        MainController.getUser().getId(),
+                        null
                 );
                 Writer.addDebt(newDebt, client);
                 client.getDebts().add(newDebt);
                 client.sortDebts();
                 client.update();
                 JOptionPane.showMessageDialog(null, "Nuevo saldo para " + client.getName() + ", " + client.getNick() + ":\n\n     $" + amountFormater.format(client.getTotalNotPaidBalance()));
-                parent.setInfoData();
-                tools.swapWindow(parent.getView(), view);
+                MainController.changeToClientInfoMode(client,
+                        sessionKey);
             }
             catch(NumberFormatException e) {
                 
@@ -182,7 +175,7 @@ public class AddDebtController {
     }
     
     private boolean noFieldsEmpty() {
-        if(view.newDebtField.getText().equals("")) {
+        if(view.amountField.getText().equals("")) {
             return false;
         }
         if(view.dateField.getText().equals("")) {
@@ -221,7 +214,7 @@ public class AddDebtController {
         thisMonth = Integer.parseInt(formater.format(new Date()));
         
         for(Debt debt: client.getDebts()) {
-            if((Integer.parseInt(debt.getDate().substring(3, 5)) == thisMonth) && (!debt.isPaid())) {
+            if((Integer.parseInt(debt.getCreationDate().substring(3, 5)) == thisMonth) && (!debt.isPaid())) {
                 thisMonthBalance += debt.getBalance();
             }
         }
@@ -230,6 +223,6 @@ public class AddDebtController {
     }
     
     private void verifySession() {
-        parentLogIn.verifySession(sessionKey);
+        MainController.authenticate(sessionKey);
     }
 }

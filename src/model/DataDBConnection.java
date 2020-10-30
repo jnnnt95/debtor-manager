@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DataDBConnection {
     private static Connection connection;
-    private static String path = "Data\\debtor_manager_data.db";
+    private static final String path = "Data\\debtor_manager_data.db";
     
     private static void connect() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");

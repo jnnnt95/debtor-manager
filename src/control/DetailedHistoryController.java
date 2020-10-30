@@ -1,10 +1,9 @@
 package control;
 
 import model.Client;
-import view.DetailedHistoryView;
+import view.full_size_view.DetailedHistoryView;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -26,8 +26,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author admin
  */
 public class DetailedHistoryController {
-    private final DetailedHistoryView view;
-    private ClientInfoController parent;
+    private DetailedHistoryView view;
     private Client client;
     private List<Integer> monthlyAmount;
     private List<String> monthlyDates;
@@ -35,20 +34,17 @@ public class DetailedHistoryController {
     private double mean;
     private DecimalFormat amountFormater;
     private String sessionKey;
-    private LogInController parentLogIn;
     
     
-    public DetailedHistoryController(LogInController parentLogIn, String sessionKey) throws ParseException {
-        this.parentLogIn = parentLogIn;
+    public DetailedHistoryController(String sessionKey) throws ParseException {
         this.sessionKey = sessionKey;
         view = new DetailedHistoryView();
         amountFormater = new DecimalFormat("###,###.##");
         initView();
     }
     
-    public void setViewData(ClientInfoController parent, Client client) throws ParseException {
+    public void setViewData(Client client, TableModel tableModel) throws ParseException {
         verifySession();
-        this.parent = parent;
         this.client = client;
         monthlyDates = client.getMonthlyDates();
         monthlyAmount = client.getMonthlyAmount();
@@ -68,7 +64,7 @@ public class DetailedHistoryController {
         }
         view.notPaidBalanceLabel.setText("$" + amountFormater.format(client.getTotalNotPaidBalance()));
         setMonthlyHistoryTableModel();
-        view.totalHistoryTable.setModel(parent.getView().historyTable.getModel());
+        view.totalHistoryTable.setModel(tableModel);
         try {
             displayChart();
         } catch (ParseException ex) {
@@ -78,27 +74,20 @@ public class DetailedHistoryController {
     
     private void initView() {
         verifySession();
-        view.cancelButon.addActionListener(new AbstractAction() {
+        view.goBackButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    goBack();
+                    MainController.changeToClientInfoMode(client,
+                            sessionKey);
                 } catch (ParseException ex) {
-                    Logger.getLogger(DetailedHistoryController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DetailedHistoryController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
                 }
             }
         });
-        view.exitButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-    }
-    
-    private void goBack() throws ParseException {
-        parent.setInfoData();
-        tools.swapWindow(parent.getView(), view);
     }
     
     public DetailedHistoryView getView() {
@@ -203,7 +192,6 @@ public class DetailedHistoryController {
         view.chartPanel.add(chartPanel);
         
         view.chartPanel.updateUI();
-        view.setVisible(true);
     }
     
     private String getMonthName(String month) {
@@ -351,6 +339,6 @@ public class DetailedHistoryController {
     }
     
     private void verifySession() {
-        parentLogIn.verifySession(sessionKey);
+        MainController.authenticate(sessionKey);
     }
 }

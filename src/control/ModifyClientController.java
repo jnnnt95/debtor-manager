@@ -1,6 +1,7 @@
 package control;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.logging.Level;
@@ -8,8 +9,9 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import model.Client;
-import model.Writer;
-import view.ModifyClientView;
+import model.IO.Writer;
+import model.enums.OperationCode;
+import view.pop_up_view.ModifyClientView;
 
 
 /**
@@ -18,13 +20,10 @@ import view.ModifyClientView;
  */
 public class ModifyClientController {
     private Client client;
-    private ClientInfoController parent;
     private ModifyClientView view;
     private String sessionKey;
-    private LogInController parentLogIn;
     
-    public ModifyClientController(LogInController parentLogIn, String sessionKey) {
-        this.parentLogIn = parentLogIn;
+    public ModifyClientController(String sessionKey) {
         this.sessionKey = sessionKey;
         view = new ModifyClientView();
         view.nameField.requestFocus();
@@ -36,29 +35,44 @@ public class ModifyClientController {
         return view;
     }
     
-    public void setViewData(Client client, ClientInfoController parent) {
-        verifySession();
+    public void setCurrentClient(Client client) {
         this.client = client;
-        this.parent = parent;
-        
-        view.nameField.setText(client.getName());
-        view.nickField.setText(client.getNick());
-        view.cpNumberField.setText(client.getCPNumber());
-        view.areaField.setText(client.getArea());
     }
     
     private void initview() {
         verifySession();
-        view.exitButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
         view.cancelButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tools.swapWindow(parent.getView(), view);
+                try {
+                    MainController.seek(OperationCode.cancelModifyingAClient,
+                            sessionKey);
+                } catch (IOException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                } catch (ParseException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                }
             }
         });
         view.acceptButton.addActionListener(new AbstractAction() {
@@ -72,13 +86,23 @@ public class ModifyClientController {
                     Logger.getLogger(ModifyClientController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
                     Logger.getLogger(ModifyClientController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ModifyClientController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
                 }
             }
         });
         
     }
     
-    private void saveInfo() throws ParseException, ClassNotFoundException, SQLException {
+    private void saveInfo() throws ParseException, ClassNotFoundException, SQLException, IOException, InterruptedException {
         if(areFieldsRight()) {
             String name;
             name = view.nameField.getText().trim();
@@ -99,7 +123,7 @@ public class ModifyClientController {
                     + "   Teléfono: " + cpNumber + "\n"
                     + "   Área: " + area;
             
-            switch(tools.confirm(printable)) {
+            switch(JOptionPane.showConfirmDialog(null, printable)) {
                 case 0:
                     client.setName(name);
                     client.setNick(nick);
@@ -107,12 +131,13 @@ public class ModifyClientController {
                     client.setArea(area);
 
                     Writer.modifyClient(client);
-                    parent.setInfoData();
-                    tools.swapWindow(parent.getView(), view);
+                    MainController.changeToClientInfoMode(client,
+                            sessionKey);
                     break;
                 case 1:
                     JOptionPane.showMessageDialog(null, "No se realizaron cambios");
-                    tools.swapWindow(parent.getView(), view);
+                    MainController.seek(OperationCode.cancelModifyingAClient,
+                            sessionKey);
                     break;
             }
         }
@@ -217,6 +242,6 @@ public class ModifyClientController {
     }
     
     private void verifySession() {
-        parentLogIn.verifySession(sessionKey);
+        MainController.authenticate(sessionKey);
     }
 }

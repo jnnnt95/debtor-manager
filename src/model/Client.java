@@ -28,13 +28,18 @@ public class Client {
     private int defaultAmount;
     private List<String> monthlyDates;
     private boolean defaulter;
+    private final String createdBy;
+    private final int creatorId;
     
     public Client(int id,
             String name,
             String nick,
             String cpNumber,
             String area,
-            List<Debt> debts) throws ParseException {
+            List<Debt> debts,
+            String createdBy,
+            int creatorId
+            ) throws ParseException {
         this.id = id;
         this.name = name;
         this.nick = nick;
@@ -46,7 +51,17 @@ public class Client {
         }
         this.area = area;
         this.debts = debts;
+        this.createdBy = createdBy;
+        this.creatorId = creatorId;
         setDefaultAmount();
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public int getCreatorId() {
+        return creatorId;
     }
 
     private int getNonPaidBalance() {
@@ -112,14 +127,14 @@ public class Client {
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         
         for(Debt debt: debts) {
-            dates.add(dateFormat.parse(debt.getDate()));
+            dates.add(dateFormat.parse(debt.getCreationDate()));
         }
         
         Collections.sort(dates);
         
         for(int i = 0; i < dates.size(); i++) {
             for(int j = i; j < debts.size(); j++) {
-                if(dates.get(i).equals(dateFormat.parse(debts.get(j).getDate()))) {
+                if(dates.get(i).equals(dateFormat.parse(debts.get(j).getCreationDate()))) {
                     Collections.swap(debts, i, j);
                 }
             }
@@ -164,7 +179,7 @@ public class Client {
             Calendar calendar;
             calendar = Calendar.getInstance();
 
-            calendar.setTime(formater.parse(debts.get(0).getDate().substring(3)));
+            calendar.setTime(formater.parse(debts.get(0).getCreationDate().substring(3)));
 
             while (!formater.format(calendar.getTime()).equals(formater.format(new Date()))) {
                 monthlyDates.add(formater.format(calendar.getTime()));
@@ -182,7 +197,7 @@ public class Client {
         return defaultAmount;
     }
     
-    public void setDefaultAmount() throws ParseException {
+    private void setDefaultAmount() throws ParseException {
         defaultAmount = 0;
         
         SimpleDateFormat dayFormater;
@@ -200,7 +215,7 @@ public class Client {
         aMonthAgo = calendar.getTime();
         
         for(int i = 0; i < debts.size(); i++) {
-            if(dayFormater.parse(debts.get(i).getDate()).
+            if(dayFormater.parse(debts.get(i).getCreationDate()).
                     before(dayFormater.parse(dayFormater.format(aMonthAgo)))
                     &&
                 !debts.get(i).isPaid()) {
@@ -230,7 +245,7 @@ public class Client {
             for(int j = 0; j < monthlyDates.size(); j++) {
                 int index;
                 index = monthFormater.parse(
-                            debts.get(i).getDate().substring(3)
+                            debts.get(i).getCreationDate().substring(3)
                         ).compareTo(
                                 monthFormater.parse(monthlyDates.get(j))
                         );
