@@ -553,6 +553,7 @@ public class MainController {
         fullSizeViewport.businessMenuItem.setVisible(false);
         fullSizeViewport.usersCredentialsMenuItem.setVisible(false);
         clientInfo.getView().disableClientButton.setVisible(false);
+        queryClient.getView().exportToExcelButton.setVisible(false);
     }
 
     private static void viewGenericInitialization() {

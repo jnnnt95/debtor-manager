@@ -272,7 +272,6 @@ public class Writer {
         query += " WHERE id = "
                 + debt.getId();
         
-        System.out.println(query);
         Statement statement;
         statement = connection.createStatement();
 

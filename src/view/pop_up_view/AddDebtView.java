@@ -47,6 +47,8 @@ public class AddDebtView extends javax.swing.JFrame {
         addDebtButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         warningLabel = new javax.swing.JLabel();
+        oneLessDayButton = new javax.swing.JButton();
+        oneMoreDayButton = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
@@ -123,6 +125,22 @@ public class AddDebtView extends javax.swing.JFrame {
         warningLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         warningLabel.setText("!");
 
+        oneLessDayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        oneLessDayButton.setText("<");
+        oneLessDayButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oneLessDayButtonActionPerformed(evt);
+            }
+        });
+
+        oneMoreDayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        oneMoreDayButton.setText(">");
+        oneMoreDayButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oneMoreDayButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -153,7 +171,12 @@ public class AddDebtView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(amountField)
-                            .addComponent(dateField))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(dateField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(oneLessDayButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(oneMoreDayButton)))
                         .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(236, Short.MAX_VALUE)
@@ -165,7 +188,7 @@ public class AddDebtView extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
+                .addContainerGap(42, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -185,7 +208,9 @@ public class AddDebtView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(oneLessDayButton)
+                    .addComponent(oneMoreDayButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -238,6 +263,14 @@ public class AddDebtView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_amountFieldActionPerformed
 
+    private void oneLessDayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneLessDayButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_oneLessDayButtonActionPerformed
+
+    private void oneMoreDayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneMoreDayButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_oneMoreDayButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton addDebtButton;
     public javax.swing.JTextField amountField;
@@ -252,6 +285,8 @@ public class AddDebtView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JButton oneLessDayButton;
+    public javax.swing.JButton oneMoreDayButton;
     public javax.swing.JLabel totalNotPaidBalanceLabel;
     public javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables

@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,11 +33,17 @@ public class AddDebtController {
     private double standardDeviation;
     private DecimalFormat amountFormater;
     private String sessionKey;
+    private SimpleDateFormat dateFormater;
+    private Calendar calendar;
+    private final Date today;
     
     public AddDebtController(String sessionKey) {
         this.sessionKey = sessionKey;
         view = new AddDebtView();
         amountFormater = new DecimalFormat("###,###.##");
+        dateFormater = new SimpleDateFormat("dd/MM/yyyy");
+        calendar = Calendar.getInstance();
+        today = new Date();
         
         initView();
     }
@@ -56,8 +63,46 @@ public class AddDebtController {
         view.warningLabel.setVisible(client.isDefaulter());
     }
     
+    private void addOneDayToDate() throws ParseException {
+        calendar.setTime(dateFormater.parse(view.dateField.getText().trim()));
+        calendar.add(Calendar.DATE, 1);
+        view.dateField.setText(dateFormater.format(calendar.getTime()));
+    }
+    
+    private void removeOneDayToDate() throws ParseException {
+        calendar.setTime(dateFormater.parse(view.dateField.getText().trim()));
+        calendar.add(Calendar.DATE, -1);
+        view.dateField.setText(dateFormater.format(calendar.getTime()));
+    }
+    
     private void initView() {
         verifySession();
+        view.oneMoreDayButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    addOneDayToDate();
+                } catch (ParseException ex) {
+                    Logger.getLogger(AddDebtController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                }
+            }
+        });
+        view.oneLessDayButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    removeOneDayToDate();
+                } catch (ParseException ex) {
+                    Logger.getLogger(AddDebtController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                }
+            }
+        });
         view.amountField.setText("");
         view.cancelButton.addActionListener(new AbstractAction() {
             @Override
@@ -185,9 +230,7 @@ public class AddDebtController {
     }
     
     private void setToday() {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	Date date = new Date();
-	view.dateField.setText(dateFormat.format(date));
+	view.dateField.setText(dateFormater.format(today));
     }
     
     public AddDebtView getView() {

@@ -57,6 +57,7 @@ public class PerformPaymentController {
     }
     
     private void initView() {
+        view.paymentDateField.setEnabled(false);
         verifySession();
         view.cancelButton.addActionListener(new AbstractAction() {
             @Override
