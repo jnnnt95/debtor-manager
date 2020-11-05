@@ -1,11 +1,20 @@
-
 package view.pop_up_view;
 
+import control.LogInController;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 /**
@@ -13,11 +22,20 @@ import javax.swing.ImageIcon;
  * @author admin
  */
 public class LogInView extends javax.swing.JFrame {
+
     Container contentPane;
+    private boolean updated;
+    private LogInController controller;
+    private String sessionKey;
+
     /**
      * Creates new form ClientInfo
      */
-    public LogInView() {
+    public LogInView(LogInController controller, String sessionKey) {
+        updated = false;
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -26,13 +44,14 @@ public class LogInView extends javax.swing.JFrame {
                 setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
             }
         });
-        
+
         initComponents();
         setLocationRelativeTo(null);
         userTextField.requestFocus();
-        
+
         ImageIcon iconLogo = new ImageIcon("Images/icon_mini.png");
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -136,11 +155,186 @@ public class LogInView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel6;
-    public javax.swing.JButton logInButton;
+    private javax.swing.JButton logInButton;
     public javax.swing.JDesktopPane mainContainer;
     private javax.swing.JLabel nameLabelTitle5;
     private javax.swing.JLabel nickLabelTitle5;
-    public javax.swing.JPasswordField passwordTextField;
-    public javax.swing.JTextField userTextField;
+    private javax.swing.JPasswordField passwordTextField;
+    private javax.swing.JTextField userTextField;
     // End of variables declaration//GEN-END:variables
+
+    public void updateView() {
+        if (!updated) {
+            userTextField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.logIn();
+                        } catch (IOException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            passwordTextField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.logIn();
+                        } catch (IOException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            logInButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        controller.logIn();
+                    } catch (IOException ex) {
+                        Logger.getLogger(LogInController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(LogInController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(LogInController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(LogInController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(LogInController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            logInButton.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.logIn();
+                        } catch (IOException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(LogInController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            updated = true;
+        }
+    }
+
+    public void setMainElementFocus() {
+        userTextField.requestFocus();
+    }
+
+    public String getUsername() {
+        return userTextField.getText().
+                trim();
+    }
+
+    public String getPassword() {
+        return passwordTextField.getText().
+                trim();
+    }
+
+    public void clear() {
+        clearUsername();
+        clearPassword();
+    }
+
+    private void clearUsername() {
+        userTextField.setText("");
+    }
+
+    private void clearPassword() {
+        userTextField.setText("");
+    }
+
 }

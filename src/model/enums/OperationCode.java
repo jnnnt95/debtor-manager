@@ -7,4 +7,5 @@ public enum OperationCode {
     cancelModifyingAClient,
     cancelPaymentPerforming,
     completeAddinAClient
+    
 }

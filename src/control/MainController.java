@@ -1,19 +1,17 @@
 package control;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.table.TableModel;
 import model.Client;
-import model.IO.Reader;
 import model.IO.Writer;
 import view.MainViews.FullSizeMainView;
 import view.pop_up_view.OmachiView;
@@ -42,6 +40,8 @@ public class MainController {
     private static AddDebtController addDebt;
 
     private static User user;
+    
+    private static DecimalFormat amountFormater;
 
     public static void start()
             throws IOException,
@@ -51,8 +51,12 @@ public class MainController {
         Writer.setDBPreviousAmount();
         setSessionKey();
 
-        fullSizeViewport = new FullSizeMainView();
+        fullSizeViewport = new FullSizeMainView(sessionKey);
         popUpSizeViewport = new PopUpMainView();
+
+        fullSizeViewport.setPopUpSizeViewport(popUpSizeViewport);
+        popUpSizeViewport.setFullSizeViewport(fullSizeViewport);
+
         loadingView = new OmachiView();
 
         fullSizeDimension = new Dimension(
@@ -62,20 +66,19 @@ public class MainController {
                 popUpSizeViewport.container.getSize().width,
                 popUpSizeViewport.container.getSize().height);
 
+        loadingView.mainContainer.setSize(popUpSizeDimension);
         startLoading(sessionKey);
+        
+        amountFormater = new DecimalFormat("###,###.##");
 
         login = new LogInController(sessionKey);
         login.getView().mainContainer.setSize(popUpSizeDimension);
-        queryClient = new QueryClientController(sessionKey);
-        clientInfo = new ClientInfoController(sessionKey);
         addClient = new AddClientController(sessionKey);
         modifyClient = new ModifyClientController(sessionKey);
         detailedHistory = new DetailedHistoryController(sessionKey);
         performPayment = new PerformPaymentController(sessionKey);
         addDebt = new AddDebtController(sessionKey);
 
-        queryClient.getView().mainContainer.setSize(fullSizeDimension);
-        clientInfo.getView().mainContainer.setSize(fullSizeDimension);
         addClient.getView().mainContainer.setSize(popUpSizeDimension);
         modifyClient.getView().mainContainer.setSize(popUpSizeDimension);
         detailedHistory.getView().mainContainer.setSize(fullSizeDimension);
@@ -83,241 +86,6 @@ public class MainController {
         addDebt.getView().mainContainer.setSize(popUpSizeDimension);
 
         login();
-    }
-
-    private static void login() {
-        popUpSizeViewport.setLocationRelativeTo(null);
-
-        authenticate(sessionKey);
-
-        fullSizeViewport.setEnabled(false);
-
-        if (popUpSizeViewport.container.getComponentCount()
-                > 0) {
-            popUpSizeViewport.container.getComponent(0).
-                    setVisible(false);
-            popUpSizeViewport.container.removeAll();
-        }
-
-        login.getView().mainContainer.setSize(popUpSizeDimension);
-        popUpSizeViewport.container.add(login.getView().mainContainer);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        popUpSizeViewport.setVisible(true);
-        login.getView().userTextField.requestFocus();
-    }
-
-    public static void changeToQueryClientMode(String sessionKey)
-            throws InterruptedException,
-            IOException,
-            ParseException,
-            ClassNotFoundException,
-            SQLException {
-        authenticate(sessionKey);
-        if (!fullSizeViewport.queryClientsMenuItem.isVisible()) {
-            fullSizeViewport.queryClientsMenuItem.setVisible(true);
-        }
-        if (!fullSizeViewport.createClientMenuItem.isVisible()) {
-            fullSizeViewport.createClientMenuItem.setVisible(true);
-        }
-
-        try {
-            queryClient.update();
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        }
-
-        fullSizeViewport.setEnabled(true);
-
-        fullSizeViewport.container.getComponent(0).
-                setVisible(false);
-        fullSizeViewport.container.removeAll();
-        fullSizeViewport.container.add(queryClient.getView().mainContainer);
-        //popUpSizeViewport.setVisible(false);
-        fullSizeViewport.container.getComponent(0).
-                setVisible(true);
-        fullSizeViewport.queryClientsMenuItem.setVisible(false);
-        queryClient.getView().searchTextField.setText("");
-        queryClient.update();
-        queryClient.getView().searchTextField.requestFocus();
-    }
-
-    public static void changeToClientInfoMode(Client currentClient,
-            String sessionKey)
-            throws ParseException {
-        authenticate(sessionKey);
-        popUpSizeViewport.setVisible(false);
-
-        if (!fullSizeViewport.queryClientsMenuItem.isVisible()) {
-            fullSizeViewport.queryClientsMenuItem.setVisible(true);
-        }
-        if (!fullSizeViewport.createClientMenuItem.isVisible()) {
-            fullSizeViewport.createClientMenuItem.setVisible(true);
-        }
-
-        fullSizeViewport.setEnabled(true);
-
-        fullSizeViewport.requestFocus();
-
-        clientInfo.setViewData(currentClient);
-
-        fullSizeViewport.container.getComponent(0).
-                setVisible(false);
-        fullSizeViewport.container.removeAll();
-        fullSizeViewport.container.add(clientInfo.getView().mainContainer);
-        fullSizeViewport.container.getComponent(0).
-                setVisible(true);
-    }
-
-    public static void changeToCreateClientMode(String sessionKey) {
-        popUpSizeViewport.setLocationRelativeTo(null);
-
-        authenticate(sessionKey);
-        fullSizeViewport.setEnabled(false);
-
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(false);
-        popUpSizeViewport.container.removeAll();
-        popUpSizeViewport.container.add(addClient.getView().mainContainer);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        popUpSizeViewport.setVisible(true);
-    }
-
-    public static void changeToModifyClientMode(String sessionKey,
-            Client currentClient) {
-        popUpSizeViewport.setLocationRelativeTo(null);
-
-        authenticate(sessionKey);
-        fullSizeViewport.setEnabled(false);
-
-        modifyClient.setCurrentClient(currentClient);
-        modifyClient.getView().nameField.setText(currentClient.getName());
-        modifyClient.getView().nickField.setText(currentClient.getNick());
-        modifyClient.getView().cpNumberField.
-                setText(currentClient.getCPNumber());
-        modifyClient.getView().areaField.setText(currentClient.getArea());
-
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(false);
-        popUpSizeViewport.container.removeAll();
-        popUpSizeViewport.container.add(modifyClient.getView().mainContainer);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        popUpSizeViewport.setVisible(true);
-    }
-
-    public static void changeToDetailedHistoryMode(Client currentClient,
-            TableModel tableModel,
-            String sessionKey)
-            throws ParseException {
-        authenticate(sessionKey);
-        popUpSizeViewport.setVisible(false);
-
-        if (!fullSizeViewport.queryClientsMenuItem.isVisible()) {
-            fullSizeViewport.queryClientsMenuItem.setVisible(true);
-        }
-        if (!fullSizeViewport.createClientMenuItem.isVisible()) {
-            fullSizeViewport.createClientMenuItem.setVisible(true);
-        }
-
-        fullSizeViewport.setEnabled(true);
-
-        fullSizeViewport.requestFocus();
-
-        detailedHistory.setViewData(currentClient,
-                tableModel);
-
-        fullSizeViewport.container.getComponent(0).
-                setVisible(false);
-        fullSizeViewport.container.removeAll();
-        fullSizeViewport.container.add(detailedHistory.getView().mainContainer);
-        fullSizeViewport.container.getComponent(0).
-                setVisible(true);
-    }
-
-    public static void changeToPerformPaymentMode(Client currentClient,
-            String sessionKey) {
-        popUpSizeViewport.setLocationRelativeTo(null);
-
-        authenticate(sessionKey);
-        fullSizeViewport.setEnabled(false);
-
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(false);
-        popUpSizeViewport.container.removeAll();
-
-        performPayment.setViewData(currentClient);
-
-        popUpSizeViewport.container.add(performPayment.getView().mainContainer);
-        popUpSizeViewport.setVisible(true);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        performPayment.getView().amountField.requestFocus();
-
-        popUpSizeViewport.setVisible(true);
-    }
-
-    public static void changeToAddDebtMode(Client currentClient,
-            String sessionKey) {
-        popUpSizeViewport.setLocationRelativeTo(null);
-
-        authenticate(sessionKey);
-        fullSizeViewport.setEnabled(false);
-
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(false);
-        popUpSizeViewport.container.removeAll();
-
-        addDebt.setViewData(currentClient);
-
-        popUpSizeViewport.container.add(addDebt.getView().mainContainer);
-        popUpSizeViewport.setVisible(true);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        addDebt.getView().amountField.requestFocus();
-
-        popUpSizeViewport.setVisible(true);
-    }
-
-    public static void startLoading(String sessionKey) {
-        authenticate(sessionKey);
-
-        popUpSizeViewport.setLocationRelativeTo(null);
-        fullSizeViewport.setEnabled(false);
-
-        if (popUpSizeViewport.container.getComponentCount()
-                > 0) {
-            popUpSizeViewport.container.getComponent(0).
-                    setVisible(false);
-        }
-        popUpSizeViewport.container.removeAll();
-
-        loadingView.mainContainer.setSize(popUpSizeDimension);
-        popUpSizeViewport.container.add(loadingView.mainContainer);
-        popUpSizeViewport.setVisible(true);
-        popUpSizeViewport.container.getComponent(0).
-                setVisible(true);
-        popUpSizeViewport.setVisible(true);
     }
 
     private static void setSessionKey() {
@@ -361,12 +129,12 @@ public class MainController {
     public static void authenticate(String sessionKeyToVerify) {
         if (!sessionKeyToVerify.equals(sessionKey)) {
             JOptionPane.showMessageDialog(null,
-                    "Sesión desconocida, el programa se cerrará");
+                    "Error, el programa se cerrará");
             System.exit(0);
         }
     }
 
-    public static void seek(OperationCode code,
+    public static void executeOperation(OperationCode code,
             String sessionKeyToVerify)
             throws IOException,
             ParseException,
@@ -444,18 +212,37 @@ public class MainController {
 
         user = login.getUser();
 
+        fullSizeViewport.updateView();
         switch (user.getType()) {
             case administrator:
-                prepareViewsForAdministrator();
+                fullSizeViewport.prepareViewForAdministrator();
                 break;
             case normal:
-                prepareViewsForNormalUser();
-                break;
             default:
-                prepareViewsForNormalUser();
+                fullSizeViewport.prepareViewForNormalUser();
                 break;
         }
-        viewGenericInitialization();
+        
+        try {
+            queryClient = new QueryClientController(sessionKey);
+            clientInfo = new ClientInfoController(sessionKey);
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
+        
+        queryClient.getView().mainContainer.setSize(fullSizeDimension);
+        clientInfo.getView().mainContainer.setSize(fullSizeDimension);
+        
         try {
             changeToQueryClientMode(sessionKey);
         } catch (IOException ex) {
@@ -479,182 +266,161 @@ public class MainController {
                             null,
                             ex);
         }
-        fullSizeViewport.todaysPaymentsMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    JOptionPane.showMessageDialog(null,
-                            Reader.getTodaysPaymentsBalance());
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-    }
 
-    private static void prepareViewsForAdministrator() {
-        fullSizeViewport.setInstantiationUserType("Administrador",
-                user.getName());
-        fullSizeViewport.businessMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    JOptionPane.showMessageDialog(null,
-                            Reader.getBusinessBriefing());
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-        fullSizeViewport.usersCredentialsMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    JOptionPane.showMessageDialog(null,
-                            Reader.getUsersCredentials());
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-        
-    }
-
-    private static void prepareViewsForNormalUser() {
-        fullSizeViewport.setInstantiationUserType("Usuario",
-                user.getName());
-        fullSizeViewport.businessMenuItem.setVisible(false);
-        fullSizeViewport.usersCredentialsMenuItem.setVisible(false);
-        clientInfo.getView().disableClientButton.setVisible(false);
-        queryClient.getView().exportToExcelButton.setVisible(false);
-    }
-
-    private static void viewGenericInitialization() {
-        clientInfo.updateUser(user);
-        fullSizeViewport.queryClientsMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    changeToQueryClientMode(sessionKey);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ParseException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-        fullSizeViewport.createClientMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeToCreateClientMode(sessionKey);
-            }
-        });
-        fullSizeViewport.exitMenuItem.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int option;
-                option = JOptionPane.showConfirmDialog(null,
-                        "¿Salir de Debtor Manager?");
-                switch (option) {
-                    case 0:
-                        System.exit(0);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-        fullSizeViewport.aboutMenuItem.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showAbout();
-            }
-        });
-        fullSizeViewport.userInfoMenuItem.addActionListener(
-                new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    JOptionPane.showMessageDialog(null,
-                            Reader.getUserInfo(user.getId()));
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-    }
-
-    private static void showAbout() {
-        String printable = "<html><strong>® Debtor Manager<br><br>"
-                + "© Jonathan Torres</strong><br>"
-                + "   Se prohibe la distribución no autorizada de este software.<br>"
-                + "   Para más información:<br>"
-                + "      <strong>email</strong>: jnthntrm@gmail.com<br>"
-                + "      <strong>teléfono celular</strong>: 305 925 40 24<br><br>"
-                + "<strong>Arte</strong>: https://iconos8.es/</html>";
-        JOptionPane.showMessageDialog(null,
-                printable);
     }
 
     public static User getUser() {
         return user;
+    }
+
+    public static Dimension getFullSizeDimension() {
+        return fullSizeDimension;
+    }
+
+    public static Dimension getPopUpSizeDimension() {
+        return popUpSizeDimension;
+    }
+
+    // -------------------- Change-to-methods
+    // -------------------- Full Size View
+    public static void changeToQueryClientMode(String sessionKey)
+            throws InterruptedException,
+            IOException,
+            ParseException,
+            ClassNotFoundException,
+            SQLException {
+        authenticate(sessionKey);
+        queryClient.update();
+        fullSizeViewport.changeToQueryClientMode(queryClient.getView());
+    }
+
+    public static void changeToClientInfoMode(Client currentClient,
+            String sessionKey)
+            throws ParseException {
+        authenticate(sessionKey);
+        clientInfo.setViewData(currentClient);
+        fullSizeViewport.changeToClientInfoMode(clientInfo.getView());
+    }
+
+    public static void changeToDetailedHistoryMode(Client currentClient,
+            TableModel tableModel,
+            String sessionKey)
+            throws ParseException {
+        detailedHistory.setViewData(currentClient,
+                tableModel);
+        fullSizeViewport.changeToDetailedHistoryMode(detailedHistory.getView());
+    }
+
+    // -------------------- Pop Up Size View
+    public static void changeToCreateClientMode(String sessionKey) {
+        try {
+            addClient.setReady();
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MainController.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
+        popUpSizeViewport.changeToCreateClientMode(addClient.getView());
+    }
+
+    public static void changeToModifyClientMode(String sessionKey,
+            Client currentClient) {
+        authenticate(sessionKey);
+        modifyClient.setCurrentClient(currentClient);
+        modifyClient.getView().setClientName(currentClient.getName());
+        modifyClient.getView().setClientNick(currentClient.getNick());
+        modifyClient.getView().setClientCPNumber(currentClient.getCPNumber());
+        modifyClient.getView().setClientArea(currentClient.getArea());
+        popUpSizeViewport.changeToModifyClientMode(modifyClient.getView());
+    }
+
+    public static void changeToPerformPaymentMode(Client currentClient,
+            String sessionKey) {
+        authenticate(sessionKey);
+        performPayment.setViewData(currentClient);
+        popUpSizeViewport.changeToPerformPaymentMode(performPayment.getView());
+    }
+
+    public static void changeToAddDebtMode(Client currentClient,
+            String sessionKey) {
+        authenticate(sessionKey);
+        addDebt.setViewData(currentClient);
+        popUpSizeViewport.changeToAddDebtMode(addDebt.getView());
+    }
+
+    public static void startLoading(String sessionKey) {
+        authenticate(sessionKey);
+        popUpSizeViewport.startLoading(loadingView);
+    }
+
+    private static void login() {
+        popUpSizeViewport.login(login.getView());
+    }
+    
+    public static String formatAmount(int amount) {
+        return amountFormater.format(amount);
+    }
+    
+    public static String getMonthName(String month) {
+        if(month.equals("01")) return "Ene";
+        if(month.equals("02")) return "Feb";
+        if(month.equals("03")) return "Mar";
+        if(month.equals("04")) return "Abr";
+        if(month.equals("05")) return "May";
+        if(month.equals("06")) return "Jun";
+        if(month.equals("07")) return "Jul";
+        if(month.equals("08")) return "Ago";
+        if(month.equals("09")) return "Sep";
+        if(month.equals("10")) return "Oct";
+        if(month.equals("11")) return "Nov";
+        if(month.equals("12")) return "Dic";
+        return null;
+    }
+    
+    
+
+    public static boolean isNumberADigit(String s) {
+        //returns true if argument s is a number
+        if (s.equals("0")) {
+            return true;
+        }
+        if (s.equals("1")) {
+            return true;
+        }
+        if (s.equals("2")) {
+            return true;
+        }
+        if (s.equals("3")) {
+            return true;
+        }
+        if (s.equals("4")) {
+            return true;
+        }
+        if (s.equals("5")) {
+            return true;
+        }
+        if (s.equals("6")) {
+            return true;
+        }
+        if (s.equals("7")) {
+            return true;
+        }
+        if (s.equals("8")) {
+            return true;
+        }
+        if (s.equals("9")) {
+            return true;
+        }
+
+        //returns false if argument s is not a number
+        return false;
     }
 }

@@ -2,9 +2,6 @@ package control;
 
 import model.Debt;
 import model.Client;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -14,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import model.IO.Reader;
 import model.IO.Writer;
@@ -31,168 +27,27 @@ public class AddClientController {
     private AddClientView view;
 
     public AddClientController(String sessionKey) {
-        view = new AddClientView();
         this.sessionKey = sessionKey;
-        initView();
+        view = new AddClientView(this);
+        view.updateView();
     }
 
-    public void setViewData()
+    public void setReady()
             throws IOException,
             ParseException,
             ClassNotFoundException,
             SQLException {
-        view.nameTextField.setText("");
-        view.nickTextField.setText("");
-        view.cpNumberField.setText("");
-        view.areaField.setText("");
-        view.initialBalanceField.setText("");
-        view.nameTextField.requestFocus();
+        view.clearName();
+        view.clearNick();
+        view.clearCPNumber();
+        view.clearArea();
+        view.clearInitialBalance();
+        view.setMainElementFocus();
     }
 
-    private void initView() {
-        view.addClientButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    addClient();
-                } catch (IOException ex) {
-                    Logger.getLogger(AddClientController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ParseException ex) {
-                    Logger.getLogger(AddClientController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(AddClientController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(AddClientController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-        view.addClientButton.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        addClient();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-        view.nameTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        addClient();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-        view.nickTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        addClient();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-        view.cancelButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                cancelAddingAClient();
-            }
-        });
-        view.cancelButton.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    cancelAddingAClient();
-                }
-            }
-        });
-    }
-
-    private void cancelAddingAClient() {
-        JOptionPane.showMessageDialog(null,
-                "No se agregó el nuevo cliente");
+    public void cancelAddingAClient() {
         try {
-            MainController.seek(OperationCode.cancelAddingAClient,
+            MainController.executeOperation(OperationCode.cancelAddingAClient,
                     sessionKey);
         } catch (IOException ex) {
             Logger.getLogger(AddClientController.class.getName()).
@@ -222,10 +77,10 @@ public class AddClientController {
         }
     }
 
-    private boolean areFieldsRight() {
-        if (!areFieldsFilledOut()) {
+    private boolean isNewClientDataCorrect() {
+        if (!isNewClientDataSet()) {
             return false;
-        } else if (!areNameAndNickRight()) {
+        } else if (!isTextDataRight()) {
             return false;
         } else if (!isCPNumberRight()) {
             return false;
@@ -235,23 +90,29 @@ public class AddClientController {
         return true;
     }
 
-    private boolean areNameAndNickRight() {
-        if (view.nameTextField.getText().
-                trim().
+    private boolean isTextDataRight() {
+        if (view.getNewClientName().
                 length()
                 > 30) {
-            view.nameTextField.requestFocus();
+            view.setFocusOnName();
             JOptionPane.showMessageDialog(null,
                     "El nombre debe tener 30 caracteres o menos");
             return false;
         }
-        if (view.nickTextField.getText().
-                trim().
+        if (view.getNewClientNick().
                 length()
                 > 30) {
-            view.nickTextField.requestFocus();
+            view.setFocusOnNick();
             JOptionPane.showMessageDialog(null,
                     "El nick debe tener 30 caracteres o menos");
+            return false;
+        }
+        if (view.getNewClientArea().
+                length()
+                > 30) {
+            view.setFocusOnNick();
+            JOptionPane.showMessageDialog(null,
+                    "El área debe tener 30 caracteres o menos");
             return false;
         }
         return true;
@@ -260,48 +121,41 @@ public class AddClientController {
     private boolean isAValidInitialBalance() {
         int initialBalance;
         initialBalance = 0;
-        if (!view.initialBalanceField.getText().
-                trim().
-                equals("")) {
+        if (view.getNewClientInitialBalance().length() > 0) {
             try {
                 initialBalance
-                        = Integer.parseInt(view.initialBalanceField.getText().
-                                trim());
+                        = Integer.parseInt(view.getNewClientInitialBalance());
                 if (initialBalance
-                        < 0) {
+                        <= 0) {
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "Saldo inicial no válido");
-                view.initialBalanceField.selectAll();
-            }
-            if (initialBalance
-                    == 0) {
-                view.initialBalanceField.setText("");
+                view.setFocusOnInitialBalance();
+                return false;
             }
         }
         return true;
     }
 
-    private boolean areFieldsFilledOut() {
-        if (view.nameTextField.getText().
-                equals("")) {
+    private boolean isNewClientDataSet() {
+        if (view.getNewClientName().
+                length() <= 0) {
             JOptionPane.showMessageDialog(null,
                     "El campo del nombre no puede estar vacío");
-            view.nameTextField.requestFocus();
+            view.setFocusOnName();
             return false;
-        } else if (view.nickTextField.getText().
-                equals("")) {
+        } else if (view.getNewClientNick().
+                length() <= 0) {
             JOptionPane.showMessageDialog(null,
                     "El campo del nick no puede estar vacío");
-            view.nickTextField.requestFocus();
+            view.setFocusOnNick();
             return false;
-        } else if (view.areaField.getText().
-                equals("")) {
+        } else if (view.getNewClientArea().length() <= 0) {
             JOptionPane.showMessageDialog(null,
                     "El campo del área no puede estar vacío");
-            view.areaField.requestFocus();
+            view.setFocusOnArea();
             return false;
         }
         return true;
@@ -310,14 +164,13 @@ public class AddClientController {
     private boolean isCPNumberRight() {
         //check number for length
         String cpNumber;
-        cpNumber = view.cpNumberField.getText().
-                trim();
+        cpNumber = view.getNewClientCPNumber();
+        
         if (cpNumber.length()
                 > 10) {
             JOptionPane.showMessageDialog(null,
                     "Número telefónico no válido: debe tener máximo 10 dígitos");
-            view.cpNumberField.selectAll();
-            view.cpNumberField.requestFocus();
+            view.setFocusOnCPNumber();
             return false;
         }
 
@@ -326,11 +179,10 @@ public class AddClientController {
                 i
                 < cpNumber.length();
                 i++) {
-            if (!isNumberADigit(String.valueOf(cpNumber.charAt(i)))) {
+            if (!MainController.isNumberADigit(String.valueOf(cpNumber.charAt(i)))) {
                 JOptionPane.showMessageDialog(null,
                         "Número telefónico no válido: debe contener solamente números");
-                view.cpNumberField.selectAll();
-                view.cpNumberField.requestFocus();
+                view.setFocusOnCPNumber();
                 return false;
             }
         }
@@ -339,44 +191,7 @@ public class AddClientController {
         return true;
     }
 
-    private boolean isNumberADigit(String s) {
-        //returns true if argument s is a number
-        if (s.equals("0")) {
-            return true;
-        }
-        if (s.equals("1")) {
-            return true;
-        }
-        if (s.equals("2")) {
-            return true;
-        }
-        if (s.equals("3")) {
-            return true;
-        }
-        if (s.equals("4")) {
-            return true;
-        }
-        if (s.equals("5")) {
-            return true;
-        }
-        if (s.equals("6")) {
-            return true;
-        }
-        if (s.equals("7")) {
-            return true;
-        }
-        if (s.equals("8")) {
-            return true;
-        }
-        if (s.equals("9")) {
-            return true;
-        }
-
-        //returns false if argument s is not a number
-        return false;
-    }
-
-    private void addClient()
+    public void addClient()
             throws IOException,
             ParseException,
             ClassNotFoundException,
@@ -385,27 +200,24 @@ public class AddClientController {
             int newId;
             newId = getNewId();
             
-            if (areFieldsRight()) {
+            if (isNewClientDataCorrect()) {
                 String name;
-                name = view.nameTextField.getText();
+                name = view.getNewClientName();
                 
                 String nick;
-                nick = view.nickTextField.getText();
+                nick = view.getNewClientNick();
                 
                 String cpNumber;
-                cpNumber = view.cpNumberField.getText();
+                cpNumber = view.getNewClientCPNumber();
                 
                 String area;
-                area = view.areaField.getText();
+                area = view.getNewClientArea();
                 
                 int amount;
-                if (view.initialBalanceField.getText().
-                        trim().
-                        equals("")) {
+                if (view.getNewClientInitialBalance().length() <= 0) {
                     amount = 0;
                 } else {
-                    amount = Integer.parseInt(view.initialBalanceField.getText().
-                            trim());
+                    amount = Integer.parseInt(view.getNewClientInitialBalance());
                 }
                 
                 Debt initialBalance;
@@ -434,10 +246,10 @@ public class AddClientController {
                                 getId()
                 );
                 Writer.addClient(client);
+                MainController.
+                        executeOperation(OperationCode.completeAddinAClient,
+                                sessionKey);
             }
-            
-            MainController.seek(OperationCode.completeAddinAClient,
-                    sessionKey);
         } catch (InterruptedException ex) {
             Logger.getLogger(AddClientController.class.getName()).
                     log(Level.SEVERE,

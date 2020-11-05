@@ -1,26 +1,38 @@
 package view.full_size_view;
 
+import control.DetailedHistoryController;
+import control.MainController;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.text.ParseException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author admin
- */
 public class DetailedHistoryView extends javax.swing.JFrame {
+
+    private DetailedHistoryController controller;
+    private boolean updated;
+    private String sessionKey;
 
     /**
      * Creates new form DisplayYearHistory
      */
-    public DetailedHistoryView() {
+    public DetailedHistoryView(DetailedHistoryController controller, String sessionKey) {
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -60,7 +72,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         totalHistoryTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
-        MonthlyHistoryTable = new javax.swing.JTable();
+        monthlyHistoryTable = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
         cpNumberLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -131,7 +143,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
         jScrollPane2.setViewportView(totalHistoryTable);
         totalHistoryTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        MonthlyHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
+        monthlyHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -142,7 +154,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane3.setViewportView(MonthlyHistoryTable);
+        jScrollPane3.setViewportView(monthlyHistoryTable);
 
         jLabel6.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
@@ -341,10 +353,9 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JTable MonthlyHistoryTable;
-    public javax.swing.JPanel chartPanel;
+    private javax.swing.JPanel chartPanel;
     public javax.swing.JLabel cpNumberLabel;
-    public javax.swing.JButton goBackButton;
+    private javax.swing.JButton goBackButton;
     public javax.swing.JPanel historyPanel;
     private javax.swing.JDesktopPane jDesktopPane2;
     private javax.swing.JLabel jLabel1;
@@ -362,11 +373,196 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JDesktopPane mainContainer;
     public javax.swing.JLabel meanLabel;
+    private javax.swing.JTable monthlyHistoryTable;
     public javax.swing.JLabel nameLabel;
     public javax.swing.JLabel nickLabel;
     public javax.swing.JLabel notPaidBalanceLabel;
     public javax.swing.JLabel stdDevUpLimLabel;
-    public javax.swing.JTabbedPane tabs;
-    public javax.swing.JTable totalHistoryTable;
+    private javax.swing.JTabbedPane tabs;
+    private javax.swing.JTable totalHistoryTable;
     // End of variables declaration//GEN-END:variables
+
+    public void updateView() {
+        if(!updated) {
+        goBackButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    MainController.changeToClientInfoMode(controller.getCurrentClient(),
+                            sessionKey);
+                } catch (ParseException ex) {
+                    Logger.getLogger(DetailedHistoryController.class.getName()).
+                            log(Level.SEVERE,
+                            null,
+                            ex);
+                }
+            }
+        });
+            updated = true;
+        }
+    }
+    
+    public void displayChart() throws ParseException {
+        chartPanel.removeAll();
+
+        List<Integer> chartableMonthlyAmounts;
+        chartableMonthlyAmounts = controller.setChartableMonthlyAmounts();
+
+        List<String> chartableMonthlyDates;
+        chartableMonthlyDates = controller.setChartableMonthlyDates();
+
+        controller.
+                SetChartableListsSize(chartableMonthlyAmounts, chartableMonthlyDates);
+
+        List<String> controlDates;
+        controlDates = controller.setControlDates();
+
+        List<Integer> finalAmounts;
+        finalAmounts = controller.setFinalAmounts(
+                controlDates,
+                chartableMonthlyDates,
+                chartableMonthlyAmounts);
+
+        DefaultCategoryDataset dcd;
+        dcd = new DefaultCategoryDataset();
+
+        for (int i = finalAmounts.size() - 1; i >= 0; i--) {
+            if (finalAmounts.get(i) != null) {
+                dcd.setValue(
+                        finalAmounts.get(i),
+                        "Máximo crédito (pesos) por mes",
+                        MainController.getMonthName(
+                                controlDates.get(i).
+                                        substring(0, 2))
+                        + ", "
+                        + controlDates.get(i).
+                                substring(3, 7)
+                );
+            } else {
+                dcd.setValue(
+                        0,
+                        "Máximo crédito (pesos) por mes",
+                        MainController.getMonthName(
+                                controlDates.get(i).
+                                        substring(0, 2))
+                        + ", "
+                        + controlDates.get(i).
+                                substring(3, 7)
+                );
+            }
+            dcd.setValue(
+                    controller.getMean(),
+                    "Promedio",
+                    MainController.getMonthName(
+                            controlDates.get(i).
+                                    substring(0, 2))
+                    + ", "
+                    + controlDates.get(i).
+                            substring(3, 7)
+            );
+            dcd.setValue(
+                    controller.getMean() + controller.getStandardDeviation(),
+                    "(Lím. Sup.) Desviación estándar",
+                    MainController.getMonthName(
+                            controlDates.get(i).
+                                    substring(0, 2))
+                    + ", "
+                    + controlDates.get(i).
+                            substring(3, 7)
+            );
+
+        }
+
+        JFreeChart chart;
+        chart = ChartFactory.createLineChart(
+                "Deudas históricas: " + controller.getCurrentClient().
+                        getName() + ", " + controller.getCurrentClient().
+                        getNick(),
+                "Tiempo (último semestre)",
+                "Máximo crédito registrado ($)",
+                dcd,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+        chart.getCategoryPlot().
+                setRangeGridlinePaint(Color.LIGHT_GRAY);
+        chart.getCategoryPlot().
+                setBackgroundPaint(new Color(53, 85, 108));
+        chart.getCategoryPlot().
+                setDomainGridlinesVisible(true);
+
+        chart.getCategoryPlot().
+                getRenderer().
+                setSeriesPaint(0, Color.WHITE);
+        chart.getCategoryPlot().
+                getRenderer().
+                setSeriesPaint(1, Color.YELLOW);
+        chart.getCategoryPlot().
+                getRenderer().
+                setSeriesPaint(2, Color.RED);
+
+        ChartPanel dataChartPanel = new ChartPanel(chart);
+
+        chartPanel.add(dataChartPanel);
+
+        chartPanel.updateUI();
+    }
+
+    public void setMonthlyHistoryTableModel() {
+        Object[][] objectMatrix;
+        objectMatrix = new Object[controller.getMonthlyAmount().size()][2];
+        
+        for(int i = 0; i < controller.getMonthlyAmount().size(); i++) {
+            objectMatrix[i][0] = MainController.formatAmount(controller.getMonthlyAmount().get(i));
+            objectMatrix[i][1] = MainController.getMonthName(controller.getMonthlyDates().get(i).substring(0, 2)) +
+                    ", " +
+                    controller.getMonthlyDates().get(i).substring(3);
+        }
+        
+        DefaultTableModel model = new DefaultTableModel(
+                objectMatrix,
+                new String [] {
+                "Deuda ($)", "Fecha"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+                        
+            Class[] types = new Class [] {
+                java.lang.Integer.class,
+                java.lang.String.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        };
+        if (monthlyHistoryTable.getColumnModel().
+                getColumnCount() > 0) {
+            monthlyHistoryTable.getColumnModel().
+                    getColumn(0).
+                    setResizable(false);
+            monthlyHistoryTable.getColumnModel().
+                    getColumn(1).
+                    setResizable(false);
+        }
+        monthlyHistoryTable.setModel(model);
+    }
+    
+    public void setTotalHistoryTable(TableModel model) {
+        totalHistoryTable.setModel(model);
+    }
+    
+    public void setMainElementFocus() {
+        goBackButton.requestFocus();
+    }
 }

@@ -1,9 +1,19 @@
 package view.MainViews;
 
+import control.MainController;
 import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
 import javax.swing.WindowConstants;
+import view.pop_up_view.AddClientView;
+import view.pop_up_view.AddDebtView;
+import view.pop_up_view.LogInView;
+import view.pop_up_view.ModifyClientView;
+import view.pop_up_view.OmachiView;
+import view.pop_up_view.PerformPaymentView;
 
 public final class PopUpMainView extends javax.swing.JFrame {
+    
+    private FullSizeMainView fullSizeViewport;
 
     public PopUpMainView() {
         initComponents();
@@ -70,4 +80,71 @@ public final class PopUpMainView extends javax.swing.JFrame {
     public javax.swing.JPanel container;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+    
+    public void setFullSizeViewport(FullSizeMainView fullSizeViewport) {
+        this.fullSizeViewport = fullSizeViewport;
+    }
+    
+    private void backToPopUpSize() {
+        setLocationRelativeTo(null);
+        fullSizeViewport.setEnabled(false);
+        setVisible(true);
+        requestFocus();
+    }
+
+    private void setContainerContent(JDesktopPane content) {
+        if(!content.getSize().equals(container.getSize())) {
+            content.setSize(MainController.getPopUpSizeDimension());
+        }
+        container.getComponent(0).
+                setVisible(false);
+        container.removeAll();
+        container.add(content);
+        container.getComponent(0).
+                setVisible(true);
+        
+    }
+    
+    // -------------------- Change-to-methods
+    
+    public void changeToCreateClientMode(AddClientView addClientView) {
+        setContainerContent(addClientView.mainContainer);
+        backToPopUpSize();
+        addClientView.setMainElementFocus();
+    }
+
+    public void changeToModifyClientMode(ModifyClientView modifyClientView) {
+        setContainerContent(modifyClientView.mainContainer);
+        backToPopUpSize();
+        modifyClientView.setMainElementFocus();
+    }
+
+    public void changeToPerformPaymentMode(PerformPaymentView performPaymentView) {
+        setContainerContent(performPaymentView.mainContainer);
+        backToPopUpSize();
+        performPaymentView.setMainElementFocus();
+    }
+    
+    public void changeToAddDebtMode(AddDebtView addDebtView) {
+        setContainerContent(addDebtView.mainContainer);
+        backToPopUpSize();
+        addDebtView.setMainElementFocus();
+    }
+
+    public void startLoading(OmachiView loadingView) {
+        container.getComponent(0).
+                setVisible(false);
+        container.removeAll();
+        container.add(loadingView.mainContainer);
+        container.getComponent(0).
+                setVisible(true);
+        backToPopUpSize();
+    }
+
+    public void login(LogInView logInView) {
+        setContainerContent(logInView.mainContainer);
+        backToPopUpSize();
+        logInView.setMainElementFocus();
+    }
 }

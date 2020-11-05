@@ -1,16 +1,26 @@
-
 package view.full_size_view;
 
+import control.ClientInfoController;
+import control.MainController;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.table.DefaultTableModel;
+import model.Debt;
+import model.IO.Writer;
+import model.enums.OperationCode;
 
 /**
  *
@@ -18,10 +28,20 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
  */
 public class ClientInfoView extends javax.swing.JFrame {
 
+    private boolean updated;
+    private ClientInfoController controller;
+    private String sessionKey;
+    private boolean showAllDebts;
+
     /**
      * Creates new form ClientInfo
      */
-    public ClientInfoView() {
+    public ClientInfoView(ClientInfoController controller, String sessionKey) {
+        updated = false;
+        showAllDebts = false;
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -31,11 +51,12 @@ public class ClientInfoView extends javax.swing.JFrame {
             }
         });
         initComponents();
-        
+
         historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setLocationRelativeTo(null);
         payButton.requestFocus();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -181,7 +202,6 @@ public class ClientInfoView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator2)
-                            .addComponent(jScrollPane1)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
@@ -210,13 +230,14 @@ public class ClientInfoView extends javax.swing.JFrame {
                                         .addComponent(balanceLabelTitle)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(nonPaidBalanceLabel)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 452, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 461, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(modifyClientButton)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(viewDetailedHistoryButton))
-                                    .addComponent(disableClientButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(disableClientButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane1))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,10 +302,10 @@ public class ClientInfoView extends javax.swing.JFrame {
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout.createSequentialGroup()
+            .addGroup(mainContainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(19, 19, 19))
+                .addContainerGap())
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,13 +329,13 @@ public class ClientInfoView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JButton addDebtButton;
+    private javax.swing.JButton addDebtButton;
     private javax.swing.JLabel balanceLabelTitle;
     public javax.swing.JLabel cpNumberLabel;
     public javax.swing.JLabel defaultAmountLabel;
     public javax.swing.JLabel defaultAmountTitleLabel;
-    public javax.swing.JButton disableClientButton;
-    public javax.swing.JTable historyTable;
+    private javax.swing.JButton disableClientButton;
+    private javax.swing.JTable historyTable;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
@@ -322,15 +343,402 @@ public class ClientInfoView extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     public javax.swing.JDesktopPane mainContainer;
-    public javax.swing.JButton modifyClientButton;
+    private javax.swing.JButton modifyClientButton;
     public javax.swing.JLabel nameLabel;
     private javax.swing.JLabel nameLabelTitle;
     public javax.swing.JLabel nickLabel;
     private javax.swing.JLabel nickLabelTitle;
     private javax.swing.JLabel nickLabelTitle1;
     public javax.swing.JLabel nonPaidBalanceLabel;
-    public javax.swing.JButton payButton;
-    public javax.swing.JButton toggleListButton;
-    public javax.swing.JButton viewDetailedHistoryButton;
+    private javax.swing.JButton payButton;
+    private javax.swing.JButton toggleListButton;
+    private javax.swing.JButton viewDetailedHistoryButton;
     // End of variables declaration//GEN-END:variables
+    public void updateView() {
+        if (!updated) {
+            modifyClientButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MainController.changeToModifyClientMode(sessionKey,
+                            controller.getCurrentClient());
+                }
+            });
+            viewDetailedHistoryButton.
+                    addActionListener(new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            try {
+                                MainController.
+                                        changeToDetailedHistoryMode(controller.
+                                                getCurrentClient(),
+                                                historyTable.getModel(),
+                                                sessionKey);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            }
+                        }
+                    });
+            switch (MainController.getUser().
+                    getType()) {
+                case administrator:
+                    disableClientButton.addActionListener(new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            try {
+                                int selection;
+                                selection = JOptionPane.
+                                        showConfirmDialog(null, "¿Deshabilitar cliente?");
+                                switch (selection) {
+                                    case 0:
+                                        Writer.disableClient(controller.
+                                                getCurrentClient());
+                                        JOptionPane.showMessageDialog(null, "Cliente deshabilitado exitosamente");
+                                        MainController.
+                                                changeToQueryClientMode(sessionKey);
+                                        break;
+                                    case 1:
+                                    case 2:
+                                        break;
+                                }
+                            } catch (ClassNotFoundException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            } catch (IOException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            }
+                        }
+                    });
+                    break;
+                case normal:
+                    disableClientButton.setVisible(false);
+                    break;
+            }
+            toggleListButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!showAllDebts) {
+                        toggleListButton.setText("Ver deudas pendientes");
+                        showAllDebts = true;
+                        try {
+                            setInfoData();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(ClientInfoController.class.
+                                    getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    } else {
+                        toggleListButton.setText("Ver todas las deudas");
+                        showAllDebts = false;
+                        try {
+                            setInfoData();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(ClientInfoController.class.
+                                    getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            payButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        if (controller.getCurrentClient().
+                                getTotalNotPaidBalance()
+                                > 0) {
+                            MainController.
+                                    changeToPerformPaymentMode(controller.
+                                            getCurrentClient(),
+                                            sessionKey);
+                            MainController.
+                                    executeOperation(OperationCode.updateQueryClientData,
+                                            sessionKey);
+                        } else {
+                            JOptionPane.showMessageDialog(null,
+                                    "El cliente se encuentra a paz y salvo");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(ClientInfoController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(ClientInfoController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ClientInfoController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(ClientInfoController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ClientInfoController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            addDebtButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    if (controller.getCurrentClient().
+                            isDefaulter()) {
+                        JOptionPane.showMessageDialog(null,
+                                "Este cliente se encuentra en estado de mora",
+                                "Aviso: cliente en mora",
+                                JOptionPane.WARNING_MESSAGE,
+                                null);
+                    }
+                    MainController.changeToAddDebtMode(controller.
+                            getCurrentClient(),
+                            sessionKey);
+                }
+            });
+            updated = true;
+        }
+    }
+
+    public void setInfoData()
+            throws ParseException {
+        controller.getCurrentClient().
+                update();
+        nameLabel.
+                setText(controller.getCurrentClient().
+                        getName());
+        nickLabel.
+                setText(controller.getCurrentClient().
+                        getNick());
+        if (!controller.getCurrentClient().
+                getCPNumber().
+                equals("")) {
+            cpNumberLabel.
+                    setText(controller.getCurrentClient().
+                            getCPNumber());
+        } else {
+            cpNumberLabel.
+                    setText("<No registra>");
+        }
+        nonPaidBalanceLabel.
+                setText("$"
+                        + MainController.formatAmount(controller.
+                                getCurrentClient().
+                                getTotalNotPaidBalance()));
+        if (controller.getCurrentClient().
+                isDefaulter()) {
+            defaultAmountLabel.setVisible(true);
+            defaultAmountTitleLabel.setVisible(true);
+            defaultAmountLabel.
+                    setText("$"
+                            + MainController.formatAmount(controller.
+                                    getCurrentClient().
+                                    getDefaultAmount()));
+        } else {
+            defaultAmountLabel.setVisible(false);
+            defaultAmountTitleLabel.setVisible(false);
+        }
+        setHistoryTable(showAllDebts);
+    }
+
+    private void setHistoryTable(boolean showAllDebts) {
+        Object[][] objectMatrix;
+        List<Debt> debts;
+        debts = controller.getCurrentClient().
+                getDebts();
+
+        if (showAllDebts) {
+            objectMatrix = new Object[debts.size()][5];
+            for (int i = 0;
+                    i
+                    < debts.size();
+                    i++) {
+                objectMatrix[i][0] = MainController.formatAmount(debts.get(i).
+                        getBalance());
+                objectMatrix[i][1] = MainController.formatAmount(debts.get(i).
+                        getDeposit());
+                objectMatrix[i][2] = debts.get(i).
+                        getCreationDate();
+                objectMatrix[i][3] = debts.get(i).
+                        isPaid();
+                if (!debts.get(i).
+                        isPaid()) {
+                    objectMatrix[i][3] = "No pagada";
+                } else if (debts.get(i).
+                        isPaid()
+                        && (debts.get(i).
+                                getPaidDate()
+                        == null)) {
+                    objectMatrix[i][3] = "Pagada v.a. (no fecha)";
+                } else {
+                    objectMatrix[i][3] = debts.get(i).
+                            getPaidDate();
+                }
+                objectMatrix[i][4] = debts.get(i).
+                        getCreatedBy();
+            }
+        } else {
+            int totalRows;
+            totalRows = 0;
+            for (Debt debt
+                    : debts) {
+                if (!debt.isPaid()) {
+                    totalRows++;
+                }
+            }
+            List<Debt> notPaidDebts;
+            notPaidDebts = new ArrayList();
+            for (int i = 0;
+                    i
+                    < debts.size();
+                    i++) {
+                if (!debts.get(i).
+                        isPaid()) {
+                    notPaidDebts.add(debts.get(i));
+                }
+            }
+            objectMatrix = new Object[totalRows][5];
+            for (int i = 0;
+                    i
+                    < totalRows;
+                    i++) {
+                objectMatrix[i][0] = MainController.formatAmount(notPaidDebts.
+                        get(i).
+                        getBalance());
+                objectMatrix[i][1] = MainController.formatAmount(notPaidDebts.
+                        get(i).
+                        getDeposit());
+                objectMatrix[i][2] = notPaidDebts.get(i).
+                        getCreationDate();
+                if (!notPaidDebts.get(i).
+                        isPaid()) {
+                    objectMatrix[i][3] = "No pagada";
+                } else if (notPaidDebts.get(i).
+                        isPaid()
+                        && (notPaidDebts.get(i).
+                                getPaidDate()
+                        == null)) {
+                    objectMatrix[i][3] = "Pagada v.a.";
+                } else {
+                    objectMatrix[i][3] = notPaidDebts.get(i).
+                            getPaidDate();
+                }
+                objectMatrix[i][4] = notPaidDebts.get(i).
+                        getCreatedBy();
+            }
+        }
+
+        DefaultTableModel model = new DefaultTableModel(
+                objectMatrix,
+                new String[]{
+                    "Deuda ($)",
+                    "Abono ($)",
+                    "Creada (d/m/a)",
+                    "Pagada (d/m/a)",
+                    "Registrada por"
+                }
+        ) {
+            boolean[] canEdit = new boolean[]{
+                false,
+                false,
+                false,
+                false,
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex,
+                    int columnIndex) {
+                return canEdit[columnIndex];
+            }
+
+            Class[] types = new Class[]{
+                java.lang.Integer.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+
+        historyTable.getTableHeader().
+                setResizingAllowed(false);
+        historyTable.getTableHeader().
+                setReorderingAllowed(false);
+        historyTable.setModel(model);
+
+        historyTable.getColumnModel().
+                getColumn(0).
+                setPreferredWidth(15);
+        historyTable.getColumnModel().
+                getColumn(1).
+                setPreferredWidth(15);
+
+        if (historyTable.getColumnModel().
+                getColumnCount()
+                > 0) {
+            historyTable.getColumnModel().
+                    getColumn(0).
+                    setResizable(false);
+            historyTable.getColumnModel().
+                    getColumn(1).
+                    setResizable(false);
+            historyTable.getColumnModel().
+                    getColumn(2).
+                    setResizable(false);
+            historyTable.getColumnModel().
+                    getColumn(3).
+                    setResizable(false);
+            historyTable.getColumnModel().
+                    getColumn(4).
+                    setResizable(false);
+        }
+    }
+
+    public void setMainElementFocus() {
+        payButton.requestFocus();
+    }
+
 }

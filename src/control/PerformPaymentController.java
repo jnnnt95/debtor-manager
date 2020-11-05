@@ -1,4 +1,5 @@
 package control;
+
 import model.Debt;
 import model.Client;
 import java.awt.event.ActionEvent;
@@ -20,200 +21,99 @@ import java.util.List;
 import model.IO.Writer;
 import model.enums.OperationCode;
 import view.pop_up_view.PerformPaymentView;
+
 /**
  *
  * @author admin
  */
 public class PerformPaymentController {
+
     private final PerformPaymentView view;
-    private Client client;
-    private List<Integer> debts;
-    private double mean;
-    private double standardDeviation;
-    private DecimalFormat amountFormater;
+    private Client currentClient;
     private String sessionKey;
-    
+
     public PerformPaymentController(String sessionKey) {
         this.sessionKey = sessionKey;
-        view = new PerformPaymentView();
-        amountFormater = new DecimalFormat("###,###.##");
-        
-        initView();
+        view = new PerformPaymentView(this, sessionKey);
+        view.updateView();
     }
-    
+
+    public Client getCurrentClient() {
+        return currentClient;
+    }
+
     public void setViewData(Client currentClient) {
         verifySession();
-        this.client = currentClient;
-        this.debts = getDebts();
-        mean = client.getMean();
-        standardDeviation = client.getStandardDeviation();
-        
+        this.currentClient = currentClient;
+
+        view.clear();
         setToday();
-        
-        view.clientLabel.setText(client.getName() + ", " + client.getNick());
-        view.totalNotPaidBalanceLabel.setText("$" + amountFormater.format(client.getTotalNotPaidBalance()));
-        
-        view.warningLabel.setVisible(client.isDefaulter());
+        view.setClientIdentification();
+        view.setClientNotPaidBalance();
+        view.setWarningLabel();
     }
-    
-    private void initView() {
-        view.paymentDateField.setEnabled(false);
-        verifySession();
-        view.cancelButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+
+    public void performPayment() throws IOException, ParseException, ClassNotFoundException, SQLException {
+        MainController.authenticate(sessionKey);
+        if (noFieldsEmpty()) {
+            if (currentClient.getTotalNotPaidBalance() > 0) {
+                Integer amount;
                 try {
-                    MainController.seek(OperationCode.cancelPaymentPerforming,
-                            sessionKey);
-                } catch (IOException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).
-                            log(Level.SEVERE,
-                            null,
-                            ex);
-                } catch (ParseException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).
-                            log(Level.SEVERE,
-                            null,
-                            ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).
-                            log(Level.SEVERE,
-                            null,
-                            ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).
-                            log(Level.SEVERE,
-                            null,
-                            ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).
-                            log(Level.SEVERE,
-                            null,
-                            ex);
-                }
-            }
-        });
-        view.performPaymentButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    performPayment();
-                } catch (IOException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ParseException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        view.paymentDateField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if(event.getKeyCode() == KeyEvent.VK_ENTER) {
-                    try {
-                        performPayment();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
+                    amount = Integer.parseInt(view.getNewDebtAmount());
+                    if (amount <= 0) {
+                        throw new NumberFormatException();
                     }
-                }
-            }
-        });
-        view.amountField.setText("");
-        view.amountField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if(event.getKeyCode() == KeyEvent.VK_ENTER) {
-                    try {
-                        performPayment();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(PerformPaymentController.class.getName()).log(Level.SEVERE, null, ex);
+                    view.setVisible(false);
+                    switch (JOptionPane.
+                            showConfirmDialog(null, "Se pagarán $" + MainController.
+                                    formatAmount(amount) + "\n\n¿Continuar?")) {
+                        case 0:
+                            pay(amount);
+                            JOptionPane.
+                                    showMessageDialog(null, "Nuevo saldo para " + currentClient.
+                                            getName() + ":\n\n" + "     $" + MainController.
+                                                    formatAmount(currentClient.
+                                                            getTotalNotPaidBalance()));
+                            MainController.changeToClientInfoMode(currentClient,
+                                    sessionKey);
+                            break;
+                        case 1:
+                            JOptionPane.
+                                    showMessageDialog(null, "Ingrese un monto válido");
+                            break;
+                        case 2:
+                            JOptionPane.
+                                    showMessageDialog(null, "Pago cancelado");
+                            MainController.changeToClientInfoMode(currentClient,
+                                    sessionKey);
+                            break;
                     }
+                } catch (NumberFormatException e) {
+                    JOptionPane.
+                            showMessageDialog(null, "El valor ingresado no es válido");
+                    view.setFocusOnAmount();
                 }
-            }
-        });
-    }
-    
-    private void performPayment() throws IOException, ParseException, ClassNotFoundException, SQLException {
-        if(noFieldsEmpty()) {
-            if(client.getTotalNotPaidBalance() > 0) {
-            Integer amount;
-            try {
-                amount = Integer.parseInt(view.amountField.getText().trim());
-                if(amount <= 0) {
-                    throw new NumberFormatException();
-                }
-                view.setVisible(false);
-                switch(JOptionPane.showConfirmDialog(null, "Se pagarán $" + amountFormater.format(amount) + "\n\n¿Continuar?")) {
-                    case 0:
-                        pay(amount);
-                        JOptionPane.showMessageDialog(null, "Nuevo saldo para " + client.getName() + ":\n\n" + "     $" + amountFormater.format(client.getTotalNotPaidBalance()));
-                        MainController.changeToClientInfoMode(client,
-                                sessionKey);
-                        break;
-                    case 1:
-                        JOptionPane.showMessageDialog(null, "Ingrese un monto válido");
-                        resetFields();
-                        break;
-                    case 2:
-                        JOptionPane.showMessageDialog(null, "Pago cancelado");
-                        MainController.changeToClientInfoMode(client,
-                                sessionKey);
-                        resetFields();
-                        break;
-                }
-            }
-            catch(NumberFormatException e) {
-                view.setVisible(false);
-                JOptionPane.showMessageDialog(null, "El valor ingresado no es válido, intentar de nuevo");
-                resetFields();
-                view.setVisible(true);
+            } else {
+                JOptionPane.
+                        showMessageDialog(null, currentClient.getName() + " está a paz y salvo: no hay nada que pagar");
             }
         }
-        else {
-            JOptionPane.showMessageDialog(null, client.getName() + " está a paz y salvo: no hay nada que pagar");
-        }
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "Hay campos sin completar");
-        }
     }
-    
-    private void resetFields() {
-        view.amountField.setText("");
-        view.amountField.requestFocus();
-    }
-    
+
     private void pay(int amount) throws IOException, ClassNotFoundException, SQLException {
+        MainController.authenticate(sessionKey);
         String date;
-        date = view.paymentDateField.getText().trim();
-        
-        
-        
-        for(Debt debt: client.getDebts()) {
-            if(!debt.isPaid() && amount > 0) {
+        date = view.getNewDebtDate();
+
+        for (Debt debt : currentClient.getDebts()) {
+            if (!debt.isPaid() && amount > 0) {
                 int debitAssessment;
                 debitAssessment = amount - debt.getTotalDebt();
-                if(debitAssessment > 0) {
+                if (debitAssessment > 0) {
                     debt.updateDebt(debt.getTotalDebt(), date);
                     amount = debitAssessment;
-                    
-                }
-                else {
+
+                } else {
                     debt.updateDebt(amount, date);
                     amount = 0;
                 }
@@ -221,36 +121,35 @@ public class PerformPaymentController {
             }
         }
     }
-    
+
     private boolean noFieldsEmpty() {
-        if(view.amountField.getText().equals("")) {
+        if (view.getNewDebtAmount().
+                length() <= 0) {
+            JOptionPane.
+                    showMessageDialog(null, "El campo de monto no puede estar vacío");
+            view.setFocusOnAmount();
             return false;
         }
-        if(view.paymentDateField.getText().equals("")) {
+        if (view.getNewDebtDate().
+                length() <= 0) {
+            JOptionPane.
+                    showMessageDialog(null, "El campo de fecha no puede estar vacío");
+            view.setFocusOnDate();
             return false;
         }
         return true;
     }
-    
+
     private void setToday() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	Date date = new Date();
-	view.paymentDateField.setText(dateFormat.format(date));
+        Date date = new Date();
+        view.setDate(dateFormat.format(date));
     }
-    
+
     public PerformPaymentView getView() {
         return view;
     }
 
-    private List<Integer> getDebts() {
-        List<Integer> debts;
-        debts = new ArrayList<>();
-        for(Debt debt: client.getDebts()) {
-            debts.add(debt.getBalance());
-        }
-        return debts;
-    }
-    
     private void verifySession() {
         MainController.authenticate(sessionKey);
     }

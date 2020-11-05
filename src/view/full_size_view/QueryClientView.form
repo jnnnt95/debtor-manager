@@ -190,9 +190,6 @@
                 <Property name="focusCycleRoot" type="boolean" value="true"/>
                 <Property name="focusTraversalPolicyProvider" type="boolean" value="true"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
               <AuxValues>
@@ -248,9 +245,6 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -264,9 +258,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Mostrar morosos"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="resetButton">
               <Properties>
@@ -275,9 +266,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Mostrar todos"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="exportToExcelButton">
               <Properties>
@@ -289,9 +277,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Exportar a excel"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>

@@ -1,10 +1,21 @@
-
 package view.pop_up_view;
 
+import control.AddClientController;
+import control.AddDebtController;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JTextField;
 
 /**
  *
@@ -12,10 +23,16 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class AddClientView extends javax.swing.JFrame {
 
+    private boolean updated;
+    private AddClientController controller;
+
     /**
      * Creates new form ClientInfo
      */
-    public AddClientView() {
+    public AddClientView(AddClientController controller) {
+        updated = false;
+        this.controller = controller;
+
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -25,10 +42,11 @@ public class AddClientView extends javax.swing.JFrame {
             }
         });
         initComponents();
-        
+
         setLocationRelativeTo(null);
         nameTextField.requestFocus();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -211,11 +229,11 @@ public class AddClientView extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JButton addClientButton;
-    public javax.swing.JTextField areaField;
-    public javax.swing.JButton cancelButton;
-    public javax.swing.JTextField cpNumberField;
-    public javax.swing.JTextField initialBalanceField;
+    private javax.swing.JButton addClientButton;
+    private javax.swing.JTextField areaField;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JTextField cpNumberField;
+    private javax.swing.JTextField initialBalanceField;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -224,7 +242,246 @@ public class AddClientView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     public javax.swing.JDesktopPane mainContainer;
-    public javax.swing.JTextField nameTextField;
-    public javax.swing.JTextField nickTextField;
+    private javax.swing.JTextField nameTextField;
+    private javax.swing.JTextField nickTextField;
     // End of variables declaration//GEN-END:variables
+
+    public void updateView() {
+        if (!updated) {
+            nameTextField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.addClient();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            nickTextField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.addClient();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            addClientButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        controller.addClient();
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddClientController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddClientController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(AddClientController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AddClientController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            addClientButton.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.addClient();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ParseException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        } catch (SQLException ex) {
+                            Logger.
+                                    getLogger(AddClientController.class.
+                                            getName()).
+                                    log(Level.SEVERE,
+                                            null,
+                                            ex);
+                        }
+                    }
+                }
+            });
+            cancelButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    controller.cancelAddingAClient();
+                }
+            });
+            cancelButton.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        controller.cancelAddingAClient();
+                    }
+                }
+            });
+
+            updated = true;
+        }
+    }
+
+    public void setMainElementFocus() {
+        nameTextField.requestFocus();
+    }
+
+    private void setFocus(JTextField field) {
+        field.requestFocus();
+        field.selectAll();
+    }
+
+    public void clearName() {
+        nameTextField.setText("");
+    }
+
+    public void clearNick() {
+        nickTextField.setText("");
+    }
+
+    public void clearCPNumber() {
+        cpNumberField.setText("");
+    }
+
+    public void clearArea() {
+        areaField.setText("");
+    }
+
+    public void clearInitialBalance() {
+        initialBalanceField.setText("");
+    }
+
+    public String getNewClientName() {
+        return nameTextField.getText().
+                trim();
+    }
+
+    public void setFocusOnName() {
+        setFocus(nameTextField);
+    }
+
+    public String getNewClientNick() {
+        return nickTextField.getText().
+                trim();
+    }
+
+    public void setFocusOnNick() {
+        setFocus(nickTextField);
+    }
+
+    public String getNewClientCPNumber() {
+        return cpNumberField.getText().
+                trim();
+    }
+
+    public void setFocusOnCPNumber() {
+        setFocus(cpNumberField);
+    }
+
+    public String getNewClientArea() {
+        return areaField.getText().
+                trim();
+    }
+
+    public void setFocusOnArea() {
+        setFocus(areaField);
+    }
+
+    public String getNewClientInitialBalance() {
+        return initialBalanceField.getText().
+                trim();
+    }
+
+    public void setFocusOnInitialBalance() {
+        setFocus(initialBalanceField);
+    }
+
+    public void setNullNewBalance() {
+        initialBalanceField.setText("");
+    }
 }

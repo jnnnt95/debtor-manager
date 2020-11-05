@@ -1,10 +1,21 @@
-
 package view.pop_up_view;
 
+import control.AddDebtController;
+import control.MainController;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JTextField;
 
 /**
  *
@@ -12,10 +23,18 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class AddDebtView extends javax.swing.JFrame {
 
+    private boolean updated;
+    private AddDebtController controller;
+    private String sessionKey;
+
     /**
      * Creates new form ClientInfo
      */
-    public AddDebtView() {
+    public AddDebtView(AddDebtController controller, String sessionKey) {
+        updated = false;
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -28,6 +47,7 @@ public class AddDebtView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         amountField.requestFocus();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -272,11 +292,11 @@ public class AddDebtView extends javax.swing.JFrame {
     }//GEN-LAST:event_oneMoreDayButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JButton addDebtButton;
-    public javax.swing.JTextField amountField;
-    public javax.swing.JButton cancelButton;
-    public javax.swing.JLabel clientLabel;
-    public javax.swing.JTextField dateField;
+    private javax.swing.JButton addDebtButton;
+    private javax.swing.JTextField amountField;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel clientLabel;
+    private javax.swing.JTextField dateField;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -285,9 +305,182 @@ public class AddDebtView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JDesktopPane mainContainer;
-    public javax.swing.JButton oneLessDayButton;
-    public javax.swing.JButton oneMoreDayButton;
-    public javax.swing.JLabel totalNotPaidBalanceLabel;
-    public javax.swing.JLabel warningLabel;
+    private javax.swing.JButton oneLessDayButton;
+    private javax.swing.JButton oneMoreDayButton;
+    private javax.swing.JLabel totalNotPaidBalanceLabel;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
+
+    public void setMainElementFocus() {
+        amountField.requestFocus();
+    }
+
+    public void setWarningLabel() {
+        warningLabel.setVisible(controller.getCurrentClient().
+                isDefaulter());
+    }
+
+    public void clear() {
+        clearAmount();
+        clearDate();
+    }
+
+    public void clearAmount() {
+        amountField.setText("");
+    }
+
+    public void clearDate() {
+        dateField.setText("");
+    }
+
+    public void updateView() {
+        if (!updated) {
+            amountField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.addDebt();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            });
+            dateField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.addDebt();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            });
+            oneLessDayButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        controller.removeOneDayToDate();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            oneMoreDayButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        controller.addOneDayToDate();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            addDebtButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        controller.addDebt();
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            cancelButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        MainController.changeToClientInfoMode(controller.getCurrentClient(),
+                                sessionKey);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+
+            updated = true;
+        }
+    }
+
+    public String getNewDebtDate() {
+        return dateField.getText().
+                trim();
+    }
+
+    public String getNewDebtAmount() {
+        return amountField.getText().
+                trim();
+    }
+
+    public void setDate(String date) {
+        dateField.setText(date);
+    }
+
+    public String getDate() {
+        return dateField.getText().
+                trim();
+    }
+    
+    public void setClientIdentification() {
+        clientLabel.setText("<html>" + controller.getCurrentClient().getName() + ",<br>" + controller.getCurrentClient().getNick() + "</html>");
+    }
+    
+    public void setClientNotPaidBalance() {
+        totalNotPaidBalanceLabel.setText("$" + MainController.formatAmount(controller.getCurrentClient().getTotalNotPaidBalance()));
+    }
+    
+    private void setFocus(JTextField field) {
+        field.selectAll();
+        field.requestFocus();
+    }
+    
+    public void setFocusOnAmount() {
+        setFocus(amountField);
+    }
+    
+    public void setFocusOnDate() {
+        setFocus(dateField);
+    }
 }

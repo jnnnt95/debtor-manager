@@ -58,10 +58,10 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel1" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -98,7 +98,6 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jSeparator2" max="32767" attributes="0"/>
-                                  <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jSeparator1" alignment="1" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -134,7 +133,7 @@
                                               <Component id="nonPaidBalanceLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace pref="452" max="32767" attributes="0"/>
+                                      <EmptySpace pref="461" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                           <Group type="102" attributes="0">
                                               <Component id="modifyClientButton" min="-2" max="-2" attributes="0"/>
@@ -144,6 +143,7 @@
                                           <Component id="disableClientButton" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -309,9 +309,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Realizar cobro"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="addDebtButton">
               <Properties>
@@ -320,9 +317,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Agregar deuda"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="toggleListButton">
               <Properties>
@@ -331,9 +325,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Ver todas las deudas"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
@@ -394,9 +385,6 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -437,9 +425,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Modificar cliente"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="viewDetailedHistoryButton">
               <Properties>
@@ -451,9 +436,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Ver estad&#xed;sticas de cliente"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="nickLabelTitle1">
               <Properties>
@@ -492,9 +474,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Deshabilitar cliente"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

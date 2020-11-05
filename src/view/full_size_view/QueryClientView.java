@@ -1,28 +1,66 @@
-
 package view.full_size_view;
 
+import control.MainController;
+import control.QueryClientController;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JDesktopPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import jxl.write.WriteException;
+import model.Client;
+import model.IO.Reader;
+import model.IO.Writer;
+import model.enums.OperationCode;
+import model.enums.UserType;
 
 /**
  *
  * @author admin
  */
-public class QueryClientView extends javax.swing.JFrame {
+public class QueryClientView
+        extends javax.swing.JFrame {
+
+    private boolean updated;
+    private QueryClientController controller;
+    private String sessionKey;
 
     /**
      * Creates new form ClientInfo
      */
-    public QueryClientView() {
+    public QueryClientView(QueryClientController controller, String sessionKey) {
+        updated = false;
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+
         setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
+        this.setBackground(new Color(0,
+                0,
+                0,
+                180));
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
+                setShape(new RoundRectangle2D.Double(0,
+                        0,
+                        getWidth(),
+                        getHeight(),
+                        15,
+                        15));
             }
         });
         initComponents();
@@ -30,6 +68,7 @@ public class QueryClientView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         searchTextField.requestFocus();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -232,7 +271,7 @@ public class QueryClientView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JLabel debtorCounterLabel;
     public javax.swing.JLabel defaulterCounterLabel;
-    public javax.swing.JButton exportToExcelButton;
+    private javax.swing.JButton exportToExcelButton;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -242,9 +281,243 @@ public class QueryClientView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JDesktopPane mainContainer;
-    public javax.swing.JButton resetButton;
-    public javax.swing.JTable resultTable;
-    public javax.swing.JTextField searchTextField;
-    public javax.swing.JButton showDefaultersButton;
+    private javax.swing.JButton resetButton;
+    private javax.swing.JTable resultTable;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JButton showDefaultersButton;
     // End of variables declaration//GEN-END:variables
+
+    public void updateView() {
+        if (!updated) {
+            searchTextField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ENTER) {
+                        controller.setSearchTable();
+                    }
+                    if (event.getKeyCode()
+                            == KeyEvent.VK_ESCAPE) {
+                        setSearchFieldText("");
+                        controller.setSearchTable();
+                    }
+                }
+            });
+            resultTable.addMouseListener(
+                    new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    if (e.getClickCount()
+                            == 2) {
+                        int activeClientId
+                                = (Integer) resultTable.getValueAt(
+                                        resultTable.getSelectedRow(),
+                                        0);
+                        controller.updateActiveClient(activeClientId);
+
+                    }
+                }
+            });
+            if (MainController.getUser().
+                    getType() == UserType.administrator) {
+                exportToExcelButton.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            exportToExcel();
+                            openExportedData();
+                        } catch (IOException ex) {
+                            Logger.getLogger(QueryClientController.class.
+                                    getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (WriteException ex) {
+                            Logger.getLogger(QueryClientController.class.
+                                    getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            } else {
+                exportToExcelButton.setVisible(false);
+            }
+            resetButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setSearchFieldText("");
+                    controller.setSearchTable();
+                }
+            });
+            showDefaultersButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    controller.showDefaulters();
+                }
+            });
+            updated = true;
+        }
+    }
+
+    public void exportToExcel() throws IOException, WriteException {
+        Object[][] clientsData;
+        clientsData = controller.getClientsData();
+        Writer.exportToExcel(clientsData);
+    }
+
+    private void openExportedData() throws IOException {
+        Reader.openExportedData();
+    }
+
+    public JDesktopPane getMainContainer() {
+        return mainContainer;
+    }
+
+    public void setSearchFieldText(String text) {
+        searchTextField.setText(text);
+    }
+
+    public String getSearchFieldText() {
+        return searchTextField.getText().
+                trim();
+    }
+
+    public void setMainElementFocus() {
+        searchTextField.requestFocus();
+    }
+
+    public void setNewModel(List<Client> matches) {
+        resultTable.setModel(getNewResultTableModel(matches));
+        setResultTableModelFormat(matches);
+    }
+
+    private void setResultTableModelFormat(List<Client> matches) {
+        if (resultTable.getColumnModel().
+                getColumnCount()
+                > 0) {
+            resultTable.getColumnModel().
+                    getColumn(0).
+                    setResizable(false);
+            resultTable.getColumnModel().
+                    getColumn(1).
+                    setResizable(false);
+            resultTable.getColumnModel().
+                    getColumn(2).
+                    setResizable(false);
+            resultTable.getColumnModel().
+                    getColumn(3).
+                    setResizable(false);
+            resultTable.getColumnModel().
+                    getColumn(4).
+                    setResizable(false);
+            resultTable.getColumnModel().
+                    getColumn(5).
+                    setResizable(false);
+        }
+
+        resultTable.getTableHeader().
+                setResizingAllowed(false);
+        resultTable.getTableHeader().
+                setReorderingAllowed(false);
+        resultTable.getColumnModel().
+                getColumn(0).
+                setPreferredWidth(15);
+        resultTable.getColumnModel().
+                getColumn(3).
+                setPreferredWidth(15);
+        resultTable.getColumnModel().
+                getColumn(6).
+                setPreferredWidth(15);
+
+        TableColumnModel columns;
+        columns = resultTable.getColumnModel();
+
+        for (int i = 0; i
+                < columns.getColumnCount(); i++) {
+            resultTable.setDefaultRenderer(resultTable.
+                    getColumnClass(i), new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(
+                        JTable table, Object value, boolean isSelected,
+                        boolean hasFocus, int row, int column) {
+
+                    if (matches.get(row).
+                            isDefaulter()) {
+                        setForeground(new Color(255, 102, 102));
+                    } else {
+                        setForeground(Color.BLACK);
+                    }
+
+                    return super.
+                            getTableCellRendererComponent(table, value, isSelected,
+                                    hasFocus, row, column);
+                }
+            });
+        }
+    }
+
+    private DefaultTableModel getNewResultTableModel(List<Client> matches) {
+        Object[][] objectMatrix;
+        objectMatrix = new Object[matches.size()][7];
+
+        for (int i = 0; i
+                < matches.size(); i++) {
+            objectMatrix[i][0] = matches.get(i).
+                    getId();
+            objectMatrix[i][1] = matches.get(i).
+                    getNick();
+            objectMatrix[i][2] = matches.get(i).
+                    getName();
+            objectMatrix[i][3] = matches.get(i).
+                    getCPNumber();
+            objectMatrix[i][4] = matches.get(i).
+                    getArea();
+            objectMatrix[i][5] = matches.get(i).
+                    getCreatedBy();
+            objectMatrix[i][6] = "$ "
+                    + MainController.formatAmount(matches.get(i).
+                            getTotalNotPaidBalance());
+        }
+
+        DefaultTableModel model = new DefaultTableModel(
+                objectMatrix,
+                new String[]{
+                    "Id",
+                    "Nick",
+                    "Nombre",
+                    "Teléfono",
+                    "Área",
+                    "Creado por",
+                    "Total deuda"
+                }
+        ) {
+            boolean[] canEdit = new boolean[]{
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+
+            Class[] types = new Class[]{
+                java.lang.Integer.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+        return model;
+    }
 }

@@ -1,21 +1,41 @@
 
 package view.pop_up_view;
 
+import control.AddDebtController;
+import control.MainController;
+import control.PerformPaymentController;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JTextField;
 
 /**
  *
  * @author admin
  */
 public class PerformPaymentView extends javax.swing.JFrame {
-
+    private boolean updated;
+    private PerformPaymentController controller;
+    private String sessionKey;
     /**
      * Creates new form ClientInfo
      */
-    public PerformPaymentView() {
+    public PerformPaymentView(PerformPaymentController controller, String sessionKey) {
+        
+        updated = false;
+        this.controller = controller;
+        this.sessionKey = sessionKey;
+        
         setUndecorated(true);
         this.setBackground(new Color(0, 0, 0, 180));
         this.addComponentListener(new ComponentAdapter() {
@@ -25,6 +45,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
             }
         });
         initComponents();
+        dateField.setEnabled(false);
         setLocationRelativeTo(null);
         amountField.requestFocus();
     }
@@ -43,7 +64,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         amountField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        paymentDateField = new javax.swing.JTextField();
+        dateField = new javax.swing.JTextField();
         performPaymentButton = new javax.swing.JButton();
         warningLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
@@ -92,9 +113,9 @@ public class PerformPaymentView extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Fecha:");
 
-        paymentDateField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        paymentDateField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        paymentDateField.setText("dd/MM/aaaa");
+        dateField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        dateField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        dateField.setText("dd/MM/aaaa");
 
         performPaymentButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         performPaymentButton.setText("Realizar pago");
@@ -141,7 +162,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(amountField)
-                            .addComponent(paymentDateField)))
+                            .addComponent(dateField)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 232, Short.MAX_VALUE)
                         .addComponent(performPaymentButton)
@@ -156,7 +177,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(warningLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
                             .addComponent(clientLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -172,7 +193,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(paymentDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(performPaymentButton)
@@ -218,9 +239,10 @@ public class PerformPaymentView extends javax.swing.JFrame {
     }//GEN-LAST:event_performPaymentButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JTextField amountField;
-    public javax.swing.JButton cancelButton;
-    public javax.swing.JLabel clientLabel;
+    private javax.swing.JTextField amountField;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel clientLabel;
+    private javax.swing.JTextField dateField;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -229,9 +251,156 @@ public class PerformPaymentView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JDesktopPane mainContainer;
-    public javax.swing.JTextField paymentDateField;
-    public javax.swing.JButton performPaymentButton;
-    public javax.swing.JLabel totalNotPaidBalanceLabel;
-    public javax.swing.JLabel warningLabel;
+    private javax.swing.JButton performPaymentButton;
+    private javax.swing.JLabel totalNotPaidBalanceLabel;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
+
+    
+    public void setMainElementFocus() {
+        amountField.requestFocus();
+    }
+
+    public void setWarningLabel() {
+        warningLabel.setVisible(controller.getCurrentClient().
+                isDefaulter());
+    }
+
+    public void clear() {
+        clearAmount();
+        clearDate();
+    }
+
+    public void clearAmount() {
+        amountField.setText("");
+    }
+
+    public void clearDate() {
+        dateField.setText("");
+    }
+
+    public void updateView() {
+        if (!updated) {
+            amountField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.performPayment();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            });
+            dateField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            controller.performPayment();
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AddDebtController.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            });
+            performPaymentButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        controller.performPayment();
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            cancelButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        MainController.changeToClientInfoMode(controller.getCurrentClient(),
+                                sessionKey);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(AddDebtController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+
+            updated = true;
+        }
+    }
+
+    public String getNewDebtDate() {
+        return dateField.getText().
+                trim();
+    }
+
+    public String getNewDebtAmount() {
+        return amountField.getText().
+                trim();
+    }
+
+    public void setDate(String date) {
+        dateField.setText(date);
+    }
+
+    public String getDate() {
+        return dateField.getText().
+                trim();
+    }
+    
+    public void setClientIdentification() {
+        clientLabel.setText("<html>" + controller.getCurrentClient().getName() + ",<br>" + controller.getCurrentClient().getNick() + "</html>");
+    }
+    
+    public void setClientNotPaidBalance() {
+        totalNotPaidBalanceLabel.setText("$" + MainController.formatAmount(controller.getCurrentClient().getTotalNotPaidBalance()));
+    }
+    
+    private void setFocus(JTextField field) {
+        field.selectAll();
+        field.requestFocus();
+    }
+    
+    public void setFocusOnAmount() {
+        setFocus(amountField);
+    }
+    
+    public void setFocusOnDate() {
+        setFocus(dateField);
+    }
 }

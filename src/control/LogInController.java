@@ -31,159 +31,12 @@ public class LogInController {
             ClassNotFoundException,
             SQLException {
         this.sessionKey = sessionKey;
-        view = new LogInView();
-        initView();
-        view.userTextField.requestFocus();
+        view = new LogInView(this, sessionKey);
+        view.updateView();
     }
 
     public LogInView getView() {
         return view;
-    }
-
-    private void initView() {
-        view.userTextField.requestFocus();
-        view.logInButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    logIn();
-                } catch (IOException ex) {
-                    Logger.getLogger(LogInController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ParseException ex) {
-                    Logger.getLogger(LogInController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(LogInController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(LogInController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(LogInController.class.getName()).
-                            log(Level.SEVERE,
-                                    null,
-                                    ex);
-                }
-            }
-        });
-        view.logInButton.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        logIn();
-                    } catch (IOException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-        view.userTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        logIn();
-                    } catch (IOException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-        view.passwordTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode()
-                        == KeyEvent.VK_ENTER) {
-                    try {
-                        logIn();
-                    } catch (IOException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-                }
-            }
-        });
-
     }
 
     public void logIn()
@@ -193,14 +46,17 @@ public class LogInController {
             SQLException,
             InterruptedException {
         
-        String username = view.userTextField.getText().trim();
-        String password = view.passwordTextField.getText().trim();
+        String username = view.getUsername();
+        String password = view.getPassword();
         
         user = Reader.getUser(username, password);
         
         if (user != null) {
-            MainController.seek(OperationCode.launchApplication,
+            MainController.executeOperation(OperationCode.launchApplication,
                     sessionKey);
+            username = null;
+            password = null;
+            view.clear();
         } else {
             JOptionPane.showMessageDialog(null,
                     "Datos inválidos");

@@ -1,24 +1,48 @@
 package view.MainViews;
 
+import control.MainController;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import model.enums.UserType;
+import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import model.IO.Reader;
+import view.full_size_view.ClientInfoView;
+import view.full_size_view.DetailedHistoryView;
+import view.full_size_view.QueryClientView;
 
-public final class FullSizeMainView extends javax.swing.JFrame {
+public final class FullSizeMainView
+        extends javax.swing.JFrame {
 
-    public FullSizeMainView() {
+    private boolean updated;
+    private String sessionKey;
+    private PopUpMainView popUpSizeViewport;
+
+    public FullSizeMainView(String sessionKey) {
+        updated = false;
+        this.sessionKey = sessionKey;
+
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Debtor Manager");
-        
         ImageIcon img = new ImageIcon("Images/icon.png");
         setIconImage(img.getImage());
     }
-    
-    public void setInstantiationUserType(String userType, String user) {
-        setTitle("Debtor Manager | " + userType + ": " + user);
+
+    public void setInstantiationUserType(String userType,
+            String user) {
+        setTitle("Debtor Manager | "
+                + userType
+                + ": "
+                + user);
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -34,6 +58,7 @@ public final class FullSizeMainView extends javax.swing.JFrame {
         exitMenuItem = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         todaysPaymentsMenuItem = new javax.swing.JMenuItem();
+        recentPaidClientsMenuItem = new javax.swing.JMenuItem();
         businessMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         userInfoMenuItem = new javax.swing.JMenuItem();
@@ -92,6 +117,10 @@ public final class FullSizeMainView extends javax.swing.JFrame {
         todaysPaymentsMenuItem.setText("Caja por cobros del día");
         jMenu1.add(todaysPaymentsMenuItem);
 
+        recentPaidClientsMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        recentPaidClientsMenuItem.setText("Clientes de reciente cancelación");
+        jMenu1.add(recentPaidClientsMenuItem);
+
         businessMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         businessMenuItem.setText("Resumen de negocio");
         jMenu1.add(businessMenuItem);
@@ -131,18 +160,217 @@ public final class FullSizeMainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JMenu FileMenu;
     public javax.swing.JMenuBar MenuBar;
-    public javax.swing.JMenuItem aboutMenuItem;
-    public javax.swing.JMenuItem businessMenuItem;
+    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem businessMenuItem;
     public javax.swing.JPanel container;
-    public javax.swing.JMenuItem createClientMenuItem;
-    public javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenuItem createClientMenuItem;
+    private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    public javax.swing.JMenuItem queryClientsMenuItem;
-    public javax.swing.JMenuItem todaysPaymentsMenuItem;
-    public javax.swing.JMenuItem userInfoMenuItem;
+    private javax.swing.JMenuItem queryClientsMenuItem;
+    private javax.swing.JMenuItem recentPaidClientsMenuItem;
+    private javax.swing.JMenuItem todaysPaymentsMenuItem;
+    private javax.swing.JMenuItem userInfoMenuItem;
     public javax.swing.JMenuItem usersCredentialsMenuItem;
     // End of variables declaration//GEN-END:variables
+
+    public void updateView() {
+        if (!updated) {
+            queryClientsMenuItem.addActionListener(
+                    new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        MainController.changeToQueryClientMode(sessionKey);
+                    } catch (InterruptedException |
+                            IOException |
+                            ParseException |
+                            ClassNotFoundException |
+                            SQLException ex) {
+                        Logger.getLogger(MainController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+
+            });
+            exitMenuItem.addActionListener(
+                    new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int option;
+                    option = JOptionPane.showConfirmDialog(null,
+                            "¿Salir de Debtor Manager?");
+                    switch (option) {
+                        case 0:
+                            System.exit(0);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            todaysPaymentsMenuItem.addActionListener(
+                    new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        JOptionPane.showMessageDialog(null,
+                                Reader.getTodaysPaymentsBalance());
+                    } catch (ClassNotFoundException |
+                            SQLException ex) {
+                        Logger.getLogger(MainController.class.getName()).
+                                log(Level.SEVERE,
+                                        null,
+                                        ex);
+                    }
+                }
+            });
+            
+            updated = true;
+        }
+        createClientMenuItem.addActionListener(
+                new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainController.changeToCreateClientMode(sessionKey);
+            }
+        });
+        aboutMenuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAbout();
+            }
+        });
+        userInfoMenuItem.addActionListener(
+                new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JOptionPane.showMessageDialog(null,
+                            Reader.getUserInfo(MainController.getUser().getId()));
+                } catch (SQLException |
+                        ClassNotFoundException ex) {
+                    Logger.getLogger(MainController.class.getName()).
+                            log(Level.SEVERE,
+                                    null,
+                                    ex);
+                }
+            }
+        });
+    }
+
+    public void prepareViewForAdministrator() {
+        setInstantiationUserType("Administrador",
+                MainController.getUser().
+                        getName());
+        businessMenuItem.addActionListener(
+                new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JOptionPane.showMessageDialog(null,
+                            Reader.getBusinessBriefing());
+                } catch (SQLException |
+                        ClassNotFoundException ex) {
+                    Logger.getLogger(MainController.class.getName()).
+                            log(Level.SEVERE,
+                                    null,
+                                    ex);
+                }
+            }
+        });
+        usersCredentialsMenuItem.addActionListener(
+                new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JOptionPane.showMessageDialog(null,
+                            Reader.getUsersCredentials());
+                } catch (SQLException |
+                        ClassNotFoundException ex) {
+                    Logger.getLogger(MainController.class.getName()).
+                            log(Level.SEVERE,
+                                    null,
+                                    ex);
+                }
+            }
+        });
+    }
+
+    public void prepareViewForNormalUser() {
+        setInstantiationUserType("Usuario",
+                MainController.getUser().
+                        getName());
+        businessMenuItem.setVisible(false);
+        usersCredentialsMenuItem.setVisible(false);
+    }
+    
+    private void setContainerContent(JDesktopPane content) {
+        if(!content.getSize().equals(container.getSize())) {
+            content.setSize(MainController.getFullSizeDimension());
+        }
+        container.getComponent(0).
+                setVisible(false);
+        container.removeAll();
+        container.add(content);
+        container.getComponent(0).
+                setVisible(true);
+    }
+    
+    private void backToFullSize() {
+        popUpSizeViewport.setVisible(false);
+        setEnabled(true);
+        requestFocus();
+    }
+
+    private static void showAbout() {
+        String printable = "<html><strong>® Debtor Manager<br><br>"
+                + "© Jonathan Torres</strong><br>"
+                + "   Se prohibe la distribución no autorizada de este software.<br>"
+                + "   Para más información:<br>"
+                + "      <strong>email</strong>: jnthntrm@gmail.com<br>"
+                + "      <strong>teléfono celular</strong>: 305 925 40 24<br><br>"
+                + "<strong>Arte</strong>: https://iconos8.es/</html>";
+        JOptionPane.showMessageDialog(null,
+                printable);
+    }
+    
+    public void setPopUpSizeViewport(PopUpMainView popUpSizeViewport) {
+        this.popUpSizeViewport = popUpSizeViewport;
+    }
+    
+    // -------------------- Change-to-methods
+
+    public void changeToQueryClientMode(QueryClientView queryClientView) {
+        if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        setContainerContent(queryClientView.mainContainer);
+        queryClientView.setSearchFieldText("");
+        queryClientView.setMainElementFocus();
+        queryClientsMenuItem.setVisible(false);
+        backToFullSize();
+    }
+    
+    public void changeToClientInfoMode(ClientInfoView clientInfoView) {
+        if (!queryClientsMenuItem.isVisible()) {
+            queryClientsMenuItem.setVisible(true);
+        }
+        if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        setContainerContent(clientInfoView.mainContainer);
+        backToFullSize();
+        clientInfoView.setMainElementFocus();
+    }
+
+    public void changeToDetailedHistoryMode(DetailedHistoryView detailedHistoryView) {
+        setContainerContent(detailedHistoryView.mainContainer);
+        backToFullSize();
+        detailedHistoryView.setMainElementFocus();
+    }
 }
