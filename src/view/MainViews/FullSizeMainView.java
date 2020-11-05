@@ -13,6 +13,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import model.IO.Reader;
 import view.full_size_view.ClientInfoView;
+import view.full_size_view.DepositClientsOnDateView;
 import view.full_size_view.DetailedHistoryView;
 import view.full_size_view.QueryClientView;
 
@@ -20,7 +21,7 @@ public final class FullSizeMainView
         extends javax.swing.JFrame {
 
     private boolean updated;
-    private String sessionKey;
+    private final String sessionKey;
     private PopUpMainView popUpSizeViewport;
 
     public FullSizeMainView(String sessionKey) {
@@ -37,6 +38,7 @@ public final class FullSizeMainView
 
     public void setInstantiationUserType(String userType,
             String user) {
+        MainController.authenticate(sessionKey);
         setTitle("Debtor Manager | "
                 + userType
                 + ": "
@@ -58,7 +60,7 @@ public final class FullSizeMainView
         exitMenuItem = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         todaysPaymentsMenuItem = new javax.swing.JMenuItem();
-        recentPaidClientsMenuItem = new javax.swing.JMenuItem();
+        depositClientsMenuItem = new javax.swing.JMenuItem();
         businessMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         userInfoMenuItem = new javax.swing.JMenuItem();
@@ -117,9 +119,9 @@ public final class FullSizeMainView
         todaysPaymentsMenuItem.setText("Caja por cobros del día");
         jMenu1.add(todaysPaymentsMenuItem);
 
-        recentPaidClientsMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        recentPaidClientsMenuItem.setText("Clientes de reciente cancelación");
-        jMenu1.add(recentPaidClientsMenuItem);
+        depositClientsMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        depositClientsMenuItem.setText("Clientes abonados");
+        jMenu1.add(depositClientsMenuItem);
 
         businessMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         businessMenuItem.setText("Resumen de negocio");
@@ -164,19 +166,20 @@ public final class FullSizeMainView
     private javax.swing.JMenuItem businessMenuItem;
     public javax.swing.JPanel container;
     private javax.swing.JMenuItem createClientMenuItem;
+    private javax.swing.JMenuItem depositClientsMenuItem;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuItem queryClientsMenuItem;
-    private javax.swing.JMenuItem recentPaidClientsMenuItem;
     private javax.swing.JMenuItem todaysPaymentsMenuItem;
     private javax.swing.JMenuItem userInfoMenuItem;
     public javax.swing.JMenuItem usersCredentialsMenuItem;
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             queryClientsMenuItem.addActionListener(
                     new AbstractAction() {
@@ -264,6 +267,7 @@ public final class FullSizeMainView
     }
 
     public void prepareViewForAdministrator() {
+        MainController.authenticate(sessionKey);
         setInstantiationUserType("Administrador",
                 MainController.getUser().
                         getName());
@@ -299,9 +303,21 @@ public final class FullSizeMainView
                 }
             }
         });
+        depositClientsMenuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    MainController.changeToDepositClientsOnDateMode(sessionKey);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FullSizeMainView.class.getName()).
+                            log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
 
     public void prepareViewForNormalUser() {
+        MainController.authenticate(sessionKey);
         setInstantiationUserType("Usuario",
                 MainController.getUser().
                         getName());
@@ -310,6 +326,7 @@ public final class FullSizeMainView
     }
     
     private void setContainerContent(JDesktopPane content) {
+        MainController.authenticate(sessionKey);
         if(!content.getSize().equals(container.getSize())) {
             content.setSize(MainController.getFullSizeDimension());
         }
@@ -322,6 +339,7 @@ public final class FullSizeMainView
     }
     
     private void backToFullSize() {
+        MainController.authenticate(sessionKey);
         popUpSizeViewport.setVisible(false);
         setEnabled(true);
         requestFocus();
@@ -340,13 +358,18 @@ public final class FullSizeMainView
     }
     
     public void setPopUpSizeViewport(PopUpMainView popUpSizeViewport) {
+        MainController.authenticate(sessionKey);
         this.popUpSizeViewport = popUpSizeViewport;
     }
     
     // -------------------- Change-to-methods
 
     public void changeToQueryClientMode(QueryClientView queryClientView) {
+        MainController.authenticate(sessionKey);
         if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        if(!depositClientsMenuItem.isVisible()) {
             createClientMenuItem.setVisible(true);
         }
         setContainerContent(queryClientView.mainContainer);
@@ -357,10 +380,14 @@ public final class FullSizeMainView
     }
     
     public void changeToClientInfoMode(ClientInfoView clientInfoView) {
+        MainController.authenticate(sessionKey);
         if (!queryClientsMenuItem.isVisible()) {
             queryClientsMenuItem.setVisible(true);
         }
         if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        if(!depositClientsMenuItem.isVisible()) {
             createClientMenuItem.setVisible(true);
         }
         setContainerContent(clientInfoView.mainContainer);
@@ -369,8 +396,24 @@ public final class FullSizeMainView
     }
 
     public void changeToDetailedHistoryMode(DetailedHistoryView detailedHistoryView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(detailedHistoryView.mainContainer);
         backToFullSize();
         detailedHistoryView.setMainElementFocus();
+    }
+
+    public void changeToDepositClientsOnDateMode(DepositClientsOnDateView depositClientsOnDateView) {
+        MainController.authenticate(sessionKey);
+        if (!queryClientsMenuItem.isVisible()) {
+            queryClientsMenuItem.setVisible(true);
+        }
+        if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        depositClientsOnDateView.setToday();
+        setContainerContent(depositClientsOnDateView.mainContainer);
+        backToFullSize();
+        depositClientsOnDateView.setMainElementFocus();
+        depositClientsMenuItem.setVisible(false);
     }
 }

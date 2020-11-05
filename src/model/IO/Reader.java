@@ -27,6 +27,55 @@ public class Reader {
 
     private static final String ROOT_DIR = "Data";
 
+    public static ArrayList<String[]> getDepositClients(String date) throws ClassNotFoundException, SQLException {
+        
+        ArrayList<String[]> depositClients;
+        depositClients = new ArrayList<>();
+        ResultSet rawDepositClients = getRawDepositClients(date);
+
+        while (rawDepositClients.next()) {
+            String[] data = new String[4];
+            data[0] = rawDepositClients.getString(1);
+            data[1] = rawDepositClients.getString(2);
+            data[2] = rawDepositClients.getString(3);
+            data[3] = rawDepositClients.getString(4);
+
+            depositClients.add(data);
+        }
+
+        return depositClients;
+    }
+
+    private static ResultSet getRawDepositClients(String date) throws ClassNotFoundException, SQLException {
+        String query;
+        query = 
+                  "SELECT "
+                + "client_name, "
+                + "client_nick, "
+                + "sum(debts.deposit), "
+                + "total_debt "
+                + "FROM "
+                + "(SELECT "
+                + "clients.id AS 'client_id', "
+                + "clients.name AS 'client_name', "
+                + "clients.nick AS 'client_nick', "
+                + "sum(debts.balance - debts.deposit) AS 'total_debt' "
+                + "FROM debts, clients "
+                + "WHERE clients.id = debts.id_client "
+                + "GROUP BY clients.id), debts "
+                + "WHERE "
+                + "(client_id = debts.id_client) "
+                + "AND (paid_date = '" + date + "' OR last_deposit_date = '" + date + "') "
+                + "GROUP BY client_id";
+
+        ResultSet result = DataDBConnection.
+                getConnection().
+                createStatement().
+                executeQuery(query);
+
+        return result;
+    }
+
     private Reader() {
 
     }
@@ -258,23 +307,24 @@ public class Reader {
     public static String getTodaysPaymentsBalance() throws ClassNotFoundException, SQLException {
         DecimalFormat amountFormater = new DecimalFormat("###,###.##");
         SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
-        
+
         String todayDate = formater.format(new Date());
-                
+
         ResultSet rawBalance;
         rawBalance = getTodaysPaymentsBalanceRawData(todayDate);
-        
+
         int valueBalance = rawBalance.getInt(1);
-        
+
         String balance = "<html><strong>Dinero en caja por cobros <u>" + todayDate + "</u>:</strong><br><br>";
         balance += "    <i>$ " + amountFormater.format(valueBalance) + "</i>";
         balance += "</html>";
         return balance;
     }
-    
+
     private static ResultSet getTodaysPaymentsBalanceRawData(String date) throws ClassNotFoundException, SQLException {
         String query;
-        query = "SELECT SUM(debts.deposit - debts.previous_deposit_amount) FROM debts WHERE debts.last_deposit_date = '" + date.trim() + "'";
+        query = "SELECT SUM(debts.deposit - debts.previous_deposit_amount) FROM debts WHERE debts.last_deposit_date = '" + date.
+                trim() + "'";
 
         Statement statement;
         statement = DataDBConnection.getConnection().
@@ -284,20 +334,22 @@ public class Reader {
 
         return result;
     }
-    
+
     public static String getBusinessBriefing() throws SQLException, ClassNotFoundException {
         ResultSet rawBriefing = getBusinessBriefingRawData();
         DecimalFormat amountFormater = new DecimalFormat("###,###.##");
-        
+
         String briefing;
         briefing = "<html>"
-                +  "<strong><span style='color:green'>Total recaudado:</span> $ " + amountFormater.format(rawBriefing.getInt(1)) + "</strong><br>"
-                +  "<strong><span style='color:red'>Total por cobrar:</span> $ " + amountFormater.format(rawBriefing.getInt(2)) + "</strong><br>"
-                +  "</html>";
-        
+                + "<strong><span style='color:green'>Total recaudado:</span> $ " + amountFormater.
+                        format(rawBriefing.getInt(1)) + "</strong><br>"
+                + "<strong><span style='color:red'>Total por cobrar:</span> $ " + amountFormater.
+                        format(rawBriefing.getInt(2)) + "</strong><br>"
+                + "</html>";
+
         return briefing;
     }
-    
+
     private static ResultSet getBusinessBriefingRawData() throws ClassNotFoundException, SQLException {
         String query;
         query = "SELECT SUM(debts.deposit), SUM(debts.balance - debts.deposit) FROM debts";
@@ -310,23 +362,28 @@ public class Reader {
 
         return result;
     }
-    
+
     public static String getUserInfo(int userId) throws SQLException, ClassNotFoundException {
         ResultSet rawUserInfo = getUserInfoRawData(userId);
-        
+
         String userInfo;
         userInfo = "<html>"
-                +  "<strong><i>Información del usuario actual</i></strong><br><br>"
-                +  "<i><strong><span style='color:gray'>Nombre:</span></strong> " + rawUserInfo.getString(1) + "<i><br>"
-                +  "<i><strong><span style='color:gray'>Nombre de usuario:</span></strong> " + rawUserInfo.getString(2) + "<i><br>"
-                +  "<i><strong><span style='color:gray'>Teléfono:</span></strong> " + rawUserInfo.getString(3) + "<i><br>"
-                +  "<i><strong><span style='color:gray'>Fecha de creación de usuario:</span></strong> " + rawUserInfo.getString(4) + "<i><br>"
-                +  "<i><strong><span style='color:gray'>Tipo de usuario:</span></strong> " + rawUserInfo.getString(5) + "<i><br>"
-                +  "</html>";
-        
+                + "<strong><i>Información del usuario actual</i></strong><br><br>"
+                + "<i><strong><span style='color:gray'>Nombre:</span></strong> " + rawUserInfo.
+                        getString(1) + "<i><br>"
+                + "<i><strong><span style='color:gray'>Nombre de usuario:</span></strong> " + rawUserInfo.
+                        getString(2) + "<i><br>"
+                + "<i><strong><span style='color:gray'>Teléfono:</span></strong> " + rawUserInfo.
+                        getString(3) + "<i><br>"
+                + "<i><strong><span style='color:gray'>Fecha de creación de usuario:</span></strong> " + rawUserInfo.
+                        getString(4) + "<i><br>"
+                + "<i><strong><span style='color:gray'>Tipo de usuario:</span></strong> " + rawUserInfo.
+                        getString(5) + "<i><br>"
+                + "</html>";
+
         return userInfo;
     }
-    
+
     private static ResultSet getUserInfoRawData(int userId) throws ClassNotFoundException, SQLException {
         String query;
         query = "SELECT name, username, phone, date_created, type FROM users WHERE id = " + userId;
@@ -339,22 +396,23 @@ public class Reader {
 
         return result;
     }
-    
+
     public static String getUsersCredentials() throws SQLException, ClassNotFoundException {
         ResultSet rawUsersCredentials = getUsersCredentialsRawData();
-        
+
         String userInfoCredentials = "<html><strong>Credenciales de usuarios no administradores</strong>:<br><br>";
-        
+
         int c = 0;
-        while(rawUsersCredentials.next()) {
+        while (rawUsersCredentials.next()) {
             c++;
             userInfoCredentials += "<i><strong><span style='color:gray'>" + c + ") </span></strong> "
-                    + rawUsersCredentials.getString(1) + "<i>: |" + rawUsersCredentials.getString(2) + "|" + rawUsersCredentials.getString(3) + "<br>";
+                    + rawUsersCredentials.getString(1) + "<i>: |" + rawUsersCredentials.
+                    getString(2) + "|" + rawUsersCredentials.getString(3) + "<br>";
         }
-        
+
         return userInfoCredentials;
     }
-    
+
     private static ResultSet getUsersCredentialsRawData() throws ClassNotFoundException, SQLException {
         String query;
         query = "SELECT name, username, password FROM users WHERE type != 'administrator'";

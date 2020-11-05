@@ -3,7 +3,6 @@ package view.MainViews;
 import control.MainController;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
-import javax.swing.WindowConstants;
 import view.pop_up_view.AddClientView;
 import view.pop_up_view.AddDebtView;
 import view.pop_up_view.LogInView;
@@ -14,8 +13,10 @@ import view.pop_up_view.PerformPaymentView;
 public final class PopUpMainView extends javax.swing.JFrame {
     
     private FullSizeMainView fullSizeViewport;
+    private final String sessionKey;
 
-    public PopUpMainView() {
+    public PopUpMainView(String sessionKey) {
+        this.sessionKey = sessionKey;
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);
@@ -26,6 +27,7 @@ public final class PopUpMainView extends javax.swing.JFrame {
     }
     
     public void setInstantiationUserType(String userType, String user) {
+        MainController.authenticate(sessionKey);
         setTitle("Debtor Manager | " + userType + ": " + user);
     }
     
@@ -83,10 +85,12 @@ public final class PopUpMainView extends javax.swing.JFrame {
 
     
     public void setFullSizeViewport(FullSizeMainView fullSizeViewport) {
+        MainController.authenticate(sessionKey);
         this.fullSizeViewport = fullSizeViewport;
     }
     
     private void backToPopUpSize() {
+        MainController.authenticate(sessionKey);
         setLocationRelativeTo(null);
         fullSizeViewport.setEnabled(false);
         setVisible(true);
@@ -94,6 +98,7 @@ public final class PopUpMainView extends javax.swing.JFrame {
     }
 
     private void setContainerContent(JDesktopPane content) {
+        MainController.authenticate(sessionKey);
         if(!content.getSize().equals(container.getSize())) {
             content.setSize(MainController.getPopUpSizeDimension());
         }
@@ -109,30 +114,35 @@ public final class PopUpMainView extends javax.swing.JFrame {
     // -------------------- Change-to-methods
     
     public void changeToCreateClientMode(AddClientView addClientView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(addClientView.mainContainer);
         backToPopUpSize();
         addClientView.setMainElementFocus();
     }
 
     public void changeToModifyClientMode(ModifyClientView modifyClientView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(modifyClientView.mainContainer);
         backToPopUpSize();
         modifyClientView.setMainElementFocus();
     }
 
     public void changeToPerformPaymentMode(PerformPaymentView performPaymentView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(performPaymentView.mainContainer);
         backToPopUpSize();
         performPaymentView.setMainElementFocus();
     }
     
     public void changeToAddDebtMode(AddDebtView addDebtView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(addDebtView.mainContainer);
         backToPopUpSize();
         addDebtView.setMainElementFocus();
     }
 
     public void startLoading(OmachiView loadingView) {
+        MainController.authenticate(sessionKey);
         container.getComponent(0).
                 setVisible(false);
         container.removeAll();
@@ -143,6 +153,7 @@ public final class PopUpMainView extends javax.swing.JFrame {
     }
 
     public void login(LogInView logInView) {
+        MainController.authenticate(sessionKey);
         setContainerContent(logInView.mainContainer);
         backToPopUpSize();
         logInView.setMainElementFocus();

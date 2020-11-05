@@ -13,8 +13,8 @@ public class Debt {
     private final String creationDate;
     private String paidDate;
     private boolean paid;
-    private String createdBy;
-    private int creatorId;
+    private final String createdBy;
+    private final int creatorId;
     private String lastDepositDate;
     
     public Debt(int id,

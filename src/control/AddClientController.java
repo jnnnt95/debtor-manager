@@ -23,12 +23,12 @@ import view.pop_up_view.AddClientView;
  */
 public class AddClientController {
 
-    private String sessionKey;
-    private AddClientView view;
+    private final String sessionKey;
+    private final AddClientView view;
 
     public AddClientController(String sessionKey) {
         this.sessionKey = sessionKey;
-        view = new AddClientView(this);
+        view = new AddClientView(this, sessionKey);
         view.updateView();
     }
 

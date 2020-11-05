@@ -4,13 +4,9 @@ package view.pop_up_view;
 import control.AddDebtController;
 import control.MainController;
 import control.PerformPaymentController;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -25,10 +21,12 @@ import javax.swing.JTextField;
  */
 public class PerformPaymentView extends javax.swing.JFrame {
     private boolean updated;
-    private PerformPaymentController controller;
-    private String sessionKey;
+    private final PerformPaymentController controller;
+    private final String sessionKey;
     /**
      * Creates new form ClientInfo
+     * @param controller
+     * @param sessionKey
      */
     public PerformPaymentView(PerformPaymentController controller, String sessionKey) {
         
@@ -36,18 +34,8 @@ public class PerformPaymentView extends javax.swing.JFrame {
         this.controller = controller;
         this.sessionKey = sessionKey;
         
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
         initComponents();
         dateField.setEnabled(false);
-        setLocationRelativeTo(null);
-        amountField.requestFocus();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -258,28 +246,34 @@ public class PerformPaymentView extends javax.swing.JFrame {
 
     
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         amountField.requestFocus();
     }
 
     public void setWarningLabel() {
+        MainController.authenticate(sessionKey);
         warningLabel.setVisible(controller.getCurrentClient().
                 isDefaulter());
     }
 
     public void clear() {
+        MainController.authenticate(sessionKey);
         clearAmount();
         clearDate();
     }
 
     public void clearAmount() {
+        MainController.authenticate(sessionKey);
         amountField.setText("");
     }
 
     public void clearDate() {
+        MainController.authenticate(sessionKey);
         dateField.setText("");
     }
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             amountField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -287,16 +281,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                     if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                         try {
                             controller.performPayment();
-                        } catch (IOException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
+                        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
                             Logger.getLogger(AddDebtController.class.getName()).
                                     log(Level.SEVERE, null, ex);
                         }
@@ -309,16 +294,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                     if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                         try {
                             controller.performPayment();
-                        } catch (IOException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(AddDebtController.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
+                        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
                             Logger.getLogger(AddDebtController.class.getName()).
                                     log(Level.SEVERE, null, ex);
                         }
@@ -330,16 +306,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent arg0) {
                     try {
                         controller.performPayment();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AddDebtController.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
+                    } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
                         Logger.getLogger(AddDebtController.class.getName()).
                                 log(Level.SEVERE, null, ex);
                     }
@@ -365,42 +332,51 @@ public class PerformPaymentView extends javax.swing.JFrame {
     }
 
     public String getNewDebtDate() {
+        MainController.authenticate(sessionKey);
         return dateField.getText().
                 trim();
     }
 
     public String getNewDebtAmount() {
+        MainController.authenticate(sessionKey);
         return amountField.getText().
                 trim();
     }
 
     public void setDate(String date) {
+        MainController.authenticate(sessionKey);
         dateField.setText(date);
     }
 
     public String getDate() {
+        MainController.authenticate(sessionKey);
         return dateField.getText().
                 trim();
     }
     
     public void setClientIdentification() {
+        MainController.authenticate(sessionKey);
         clientLabel.setText("<html>" + controller.getCurrentClient().getName() + ",<br>" + controller.getCurrentClient().getNick() + "</html>");
     }
     
     public void setClientNotPaidBalance() {
+        MainController.authenticate(sessionKey);
         totalNotPaidBalanceLabel.setText("$" + MainController.formatAmount(controller.getCurrentClient().getTotalNotPaidBalance()));
     }
     
     private void setFocus(JTextField field) {
+        MainController.authenticate(sessionKey);
         field.selectAll();
         field.requestFocus();
     }
     
     public void setFocusOnAmount() {
+        MainController.authenticate(sessionKey);
         setFocus(amountField);
     }
     
     public void setFocusOnDate() {
+        MainController.authenticate(sessionKey);
         setFocus(dateField);
     }
 }

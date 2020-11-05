@@ -21,7 +21,7 @@ public class Client {
     private String nick;
     private String cpNumber;
     private String area;
-    private List<Debt> debts;
+    private final List<Debt> debts;
     private double mean;
     private double standardDeviation;
     private List<Integer> monthlyAmount;

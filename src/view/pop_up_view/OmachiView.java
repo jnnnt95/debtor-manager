@@ -14,10 +14,6 @@ public class OmachiView extends javax.swing.JFrame {
      */
     public OmachiView() {
         initComponents();
-        setTitle("Debtor Manager | Cargando...");
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setResizable(false);
-        setLocationRelativeTo(null);
         ImageIcon img = new ImageIcon("Images/loading-icon.png");
         loadingIconLabel.setIcon(img);
     }

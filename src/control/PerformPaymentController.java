@@ -2,24 +2,14 @@ package control;
 
 import model.Debt;
 import model.Client;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import java.util.List;
 import model.IO.Writer;
-import model.enums.OperationCode;
 import view.pop_up_view.PerformPaymentView;
 
 /**

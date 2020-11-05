@@ -1,12 +1,10 @@
 package control;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import model.Client;
 import model.IO.Writer;
@@ -20,12 +18,12 @@ import view.pop_up_view.ModifyClientView;
  */
 public class ModifyClientController {
     private Client client;
-    private ModifyClientView view;
-    private String sessionKey;
+    private final ModifyClientView view;
+    private final String sessionKey;
     
     public ModifyClientController(String sessionKey) {
         this.sessionKey = sessionKey;
-        view = new ModifyClientView(this);
+        view = new ModifyClientView(this, sessionKey);
         view.updateView();
         view.setMainElementFocus();
         
@@ -85,19 +83,7 @@ public class ModifyClientController {
         try {
             MainController.executeOperation(OperationCode.cancelModifyingAClient,
                     sessionKey);
-        } catch (IOException ex) {
-            Logger.getLogger(ModifyClientController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(ModifyClientController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ModifyClientController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ModifyClientController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
+        } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
             Logger.getLogger(ModifyClientController.class.getName()).
                     log(Level.SEVERE, null, ex);
         }

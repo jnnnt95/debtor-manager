@@ -5,11 +5,8 @@ import control.QueryClientController;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,7 +22,6 @@ import jxl.write.WriteException;
 import model.Client;
 import model.IO.Reader;
 import model.IO.Writer;
-import model.enums.OperationCode;
 import model.enums.UserType;
 
 /**
@@ -36,37 +32,21 @@ public class QueryClientView
         extends javax.swing.JFrame {
 
     private boolean updated;
-    private QueryClientController controller;
-    private String sessionKey;
+    private final QueryClientController controller;
+    private final String sessionKey;
 
     /**
      * Creates new form ClientInfo
+     * @param controller
+     * @param sessionKey
      */
     public QueryClientView(QueryClientController controller, String sessionKey) {
         updated = false;
         this.controller = controller;
         this.sessionKey = sessionKey;
 
-        setUndecorated(true);
-        this.setBackground(new Color(0,
-                0,
-                0,
-                180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0,
-                        0,
-                        getWidth(),
-                        getHeight(),
-                        15,
-                        15));
-            }
-        });
         initComponents();
         resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setLocationRelativeTo(null);
-        searchTextField.requestFocus();
     }
 
     @SuppressWarnings("unchecked")
@@ -288,6 +268,7 @@ public class QueryClientView
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             searchTextField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -326,11 +307,7 @@ public class QueryClientView
                         try {
                             exportToExcel();
                             openExportedData();
-                        } catch (IOException ex) {
-                            Logger.getLogger(QueryClientController.class.
-                                    getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (WriteException ex) {
+                        } catch (IOException | WriteException ex) {
                             Logger.getLogger(QueryClientController.class.
                                     getName()).
                                     log(Level.SEVERE, null, ex);
@@ -358,38 +335,46 @@ public class QueryClientView
     }
 
     public void exportToExcel() throws IOException, WriteException {
+        MainController.authenticate(sessionKey);
         Object[][] clientsData;
         clientsData = controller.getClientsData();
         Writer.exportToExcel(clientsData);
     }
 
     private void openExportedData() throws IOException {
+        MainController.authenticate(sessionKey);
         Reader.openExportedData();
     }
 
     public JDesktopPane getMainContainer() {
+        MainController.authenticate(sessionKey);
         return mainContainer;
     }
 
     public void setSearchFieldText(String text) {
+        MainController.authenticate(sessionKey);
         searchTextField.setText(text);
     }
 
     public String getSearchFieldText() {
+        MainController.authenticate(sessionKey);
         return searchTextField.getText().
                 trim();
     }
 
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         searchTextField.requestFocus();
     }
 
     public void setNewModel(List<Client> matches) {
+        MainController.authenticate(sessionKey);
         resultTable.setModel(getNewResultTableModel(matches));
         setResultTableModelFormat(matches);
     }
 
     private void setResultTableModelFormat(List<Client> matches) {
+        MainController.authenticate(sessionKey);
         if (resultTable.getColumnModel().
                 getColumnCount()
                 > 0) {
@@ -455,6 +440,7 @@ public class QueryClientView
     }
 
     private DefaultTableModel getNewResultTableModel(List<Client> matches) {
+        MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         objectMatrix = new Object[matches.size()][7];
 
@@ -477,7 +463,8 @@ public class QueryClientView
                             getTotalNotPaidBalance());
         }
 
-        DefaultTableModel model = new DefaultTableModel(
+        DefaultTableModel model;
+        model = new DefaultTableModel(
                 objectMatrix,
                 new String[]{
                     "Id",
@@ -499,6 +486,7 @@ public class QueryClientView
                 false
             };
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit[columnIndex];
             }

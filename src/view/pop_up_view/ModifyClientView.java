@@ -1,13 +1,10 @@
 package view.pop_up_view;
 
+import control.MainController;
 import control.ModifyClientController;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -23,26 +20,20 @@ import javax.swing.JTextField;
 public class ModifyClientView extends javax.swing.JFrame {
 
     private boolean updated;
-    private ModifyClientController controller;
+    private final ModifyClientController controller;
+    private final String sessionKey;
 
     /**
      * Creates new form modifyClientView
+     * @param controller
+     * @param sessionKey
      */
-    public ModifyClientView(ModifyClientController controller) {
+    public ModifyClientView(ModifyClientController controller, String sessionKey) {
         updated = false;
         this.controller = controller;
+        this.sessionKey = sessionKey;
 
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
         initComponents();
-        setLocationRelativeTo(null);
-        nameTextField.requestFocus();
     }
 
     @SuppressWarnings("unchecked")
@@ -200,6 +191,7 @@ public class ModifyClientView extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             nameTextField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -208,19 +200,7 @@ public class ModifyClientView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.modifyClient();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (InterruptedException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
                             Logger.getLogger(ModifyClientView.class.getName()).
                                     log(Level.SEVERE, null, ex);
                         }
@@ -234,19 +214,7 @@ public class ModifyClientView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.modifyClient();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (InterruptedException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
                             Logger.getLogger(ModifyClientView.class.getName()).
                                     log(Level.SEVERE, null, ex);
                         }
@@ -258,19 +226,7 @@ public class ModifyClientView extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent arg0) {
                     try {
                         controller.modifyClient();
-                    } catch (ParseException ex) {
-                        Logger.getLogger(ModifyClientView.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(ModifyClientView.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ModifyClientView.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ModifyClientView.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    } catch (InterruptedException ex) {
+                    } catch (ParseException | ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
                         Logger.getLogger(ModifyClientView.class.getName()).
                                 log(Level.SEVERE, null, ex);
                     }
@@ -283,19 +239,7 @@ public class ModifyClientView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.modifyClient();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(ModifyClientView.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        } catch (InterruptedException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
                             Logger.getLogger(ModifyClientView.class.getName()).
                                     log(Level.SEVERE, null, ex);
                         }
@@ -323,63 +267,77 @@ public class ModifyClientView extends javax.swing.JFrame {
     }
 
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         nameTextField.requestFocus();
     }
 
     private void setFocus(JTextField field) {
+        MainController.authenticate(sessionKey);
         field.requestFocus();
         field.selectAll();
     }
     
     public String getNewName() {
+        MainController.authenticate(sessionKey);
         return nameTextField.getText().
                 trim();
     }
 
     public void setFocusOnName() {
+        MainController.authenticate(sessionKey);
         setFocus(nameTextField);
     }
 
     public String getNewNick() {
+        MainController.authenticate(sessionKey);
         return nickTextField.getText().
                 trim();
     }
 
     public void setFocusOnNick() {
+        MainController.authenticate(sessionKey);
         setFocus(nickTextField);
     }
 
     public String getNewCPNumber() {
+        MainController.authenticate(sessionKey);
         return cpNumberField.getText().
                 trim();
     }
 
     public void setFocusOnCPNumber() {
+        MainController.authenticate(sessionKey);
         setFocus(cpNumberField);
     }
 
     public String getNewArea() {
+        MainController.authenticate(sessionKey);
         return areaField.getText().
                 trim();
     }
 
     public void setFocusOnArea() {
+        MainController.authenticate(sessionKey);
         setFocus(areaField);
     }
     
     public void setClientName(String name) {
+        MainController.authenticate(sessionKey);
         nameTextField.setText(name);
     }
     
     public void setClientNick(String nick) {
+        MainController.authenticate(sessionKey);
         nickTextField.setText(nick);
     }
     
     public void setClientCPNumber(String cPNumber) {
+        MainController.authenticate(sessionKey);
         cpNumberField.setText(cPNumber);
     }
     
     public void setClientArea(String area) {
+        MainController.authenticate(sessionKey);
         areaField.setText(area);
     }
 }

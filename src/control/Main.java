@@ -78,8 +78,6 @@ public class Main {
                 channel.close();
                 instanceValidation.delete();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (IOException ex) {}
     }
 }

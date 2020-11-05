@@ -2,13 +2,10 @@ package view.pop_up_view;
 
 import control.AddClientController;
 import control.AddDebtController;
-import java.awt.Color;
+import control.MainController;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -24,27 +21,20 @@ import javax.swing.JTextField;
 public class AddClientView extends javax.swing.JFrame {
 
     private boolean updated;
-    private AddClientController controller;
+    private final AddClientController controller;
+    private final String sessionKey;
 
     /**
      * Creates new form ClientInfo
+     * @param controller
+     * @param sessionKey
      */
-    public AddClientView(AddClientController controller) {
+    public AddClientView(AddClientController controller, String sessionKey) {
         updated = false;
         this.controller = controller;
+        this.sessionKey = sessionKey;
 
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
         initComponents();
-
-        setLocationRelativeTo(null);
-        nameTextField.requestFocus();
     }
 
     @SuppressWarnings("unchecked")
@@ -247,6 +237,7 @@ public class AddClientView extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             nameTextField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -260,21 +251,7 @@ public class AddClientView extends javax.swing.JFrame {
                                     log(Level.SEVERE,
                                             null,
                                             ex);
-                        } catch (ParseException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException ex) {
                             Logger.
                                     getLogger(AddClientController.class.
                                             getName()).
@@ -297,21 +274,7 @@ public class AddClientView extends javax.swing.JFrame {
                                     log(Level.SEVERE,
                                             null,
                                             ex);
-                        } catch (ParseException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException ex) {
                             Logger.
                                     getLogger(AddClientController.class.
                                             getName()).
@@ -327,22 +290,7 @@ public class AddClientView extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent arg0) {
                     try {
                         controller.addClient();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AddClientController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
+                    } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
                         Logger.getLogger(AddClientController.class.getName()).
                                 log(Level.SEVERE,
                                         null,
@@ -362,21 +310,7 @@ public class AddClientView extends javax.swing.JFrame {
                                     log(Level.SEVERE,
                                             null,
                                             ex);
-                        } catch (ParseException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.
-                                    getLogger(AddClientController.class.
-                                            getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
+                        } catch (ParseException | ClassNotFoundException | SQLException ex) {
                             Logger.
                                     getLogger(AddClientController.class.
                                             getName()).
@@ -408,80 +342,98 @@ public class AddClientView extends javax.swing.JFrame {
     }
 
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         nameTextField.requestFocus();
     }
 
     private void setFocus(JTextField field) {
+        MainController.authenticate(sessionKey);
         field.requestFocus();
         field.selectAll();
     }
 
     public void clearName() {
+        MainController.authenticate(sessionKey);
         nameTextField.setText("");
     }
 
     public void clearNick() {
+        MainController.authenticate(sessionKey);
         nickTextField.setText("");
     }
 
     public void clearCPNumber() {
+        MainController.authenticate(sessionKey);
         cpNumberField.setText("");
     }
 
     public void clearArea() {
+        MainController.authenticate(sessionKey);
         areaField.setText("");
     }
 
     public void clearInitialBalance() {
+        MainController.authenticate(sessionKey);
         initialBalanceField.setText("");
     }
 
     public String getNewClientName() {
+        MainController.authenticate(sessionKey);
         return nameTextField.getText().
                 trim();
     }
 
     public void setFocusOnName() {
+        MainController.authenticate(sessionKey);
         setFocus(nameTextField);
     }
 
     public String getNewClientNick() {
+        MainController.authenticate(sessionKey);
         return nickTextField.getText().
                 trim();
     }
 
     public void setFocusOnNick() {
+        MainController.authenticate(sessionKey);
         setFocus(nickTextField);
     }
 
     public String getNewClientCPNumber() {
+        MainController.authenticate(sessionKey);
         return cpNumberField.getText().
                 trim();
     }
 
     public void setFocusOnCPNumber() {
+        MainController.authenticate(sessionKey);
         setFocus(cpNumberField);
     }
 
     public String getNewClientArea() {
+        MainController.authenticate(sessionKey);
         return areaField.getText().
                 trim();
     }
 
     public void setFocusOnArea() {
+        MainController.authenticate(sessionKey);
         setFocus(areaField);
     }
 
     public String getNewClientInitialBalance() {
+        MainController.authenticate(sessionKey);
         return initialBalanceField.getText().
                 trim();
     }
 
     public void setFocusOnInitialBalance() {
+        MainController.authenticate(sessionKey);
         setFocus(initialBalanceField);
     }
 
     public void setNullNewBalance() {
+        MainController.authenticate(sessionKey);
         initialBalanceField.setText("");
     }
 }

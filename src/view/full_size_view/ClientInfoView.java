@@ -2,11 +2,7 @@ package view.full_size_view;
 
 import control.ClientInfoController;
 import control.MainController;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -29,32 +25,22 @@ import model.enums.OperationCode;
 public class ClientInfoView extends javax.swing.JFrame {
 
     private boolean updated;
-    private ClientInfoController controller;
-    private String sessionKey;
+    private final ClientInfoController controller;
+    private final String sessionKey;
     private boolean showAllDebts;
 
     /**
      * Creates new form ClientInfo
+     * @param controller
+     * @param sessionKey
      */
     public ClientInfoView(ClientInfoController controller, String sessionKey) {
         updated = false;
         showAllDebts = false;
         this.controller = controller;
         this.sessionKey = sessionKey;
-
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
         initComponents();
-
         historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setLocationRelativeTo(null);
-        payButton.requestFocus();
     }
 
     @SuppressWarnings("unchecked")
@@ -355,6 +341,7 @@ public class ClientInfoView extends javax.swing.JFrame {
     private javax.swing.JButton viewDetailedHistoryButton;
     // End of variables declaration//GEN-END:variables
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             modifyClientButton.addActionListener(new AbstractAction() {
                 @Override
@@ -404,31 +391,7 @@ public class ClientInfoView extends javax.swing.JFrame {
                                     case 2:
                                         break;
                                 }
-                            } catch (ClassNotFoundException ex) {
-                                Logger.getLogger(ClientInfoController.class.
-                                        getName()).
-                                        log(Level.SEVERE,
-                                                null,
-                                                ex);
-                            } catch (SQLException ex) {
-                                Logger.getLogger(ClientInfoController.class.
-                                        getName()).
-                                        log(Level.SEVERE,
-                                                null,
-                                                ex);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(ClientInfoController.class.
-                                        getName()).
-                                        log(Level.SEVERE,
-                                                null,
-                                                ex);
-                            } catch (IOException ex) {
-                                Logger.getLogger(ClientInfoController.class.
-                                        getName()).
-                                        log(Level.SEVERE,
-                                                null,
-                                                ex);
-                            } catch (ParseException ex) {
+                            } catch (ClassNotFoundException | SQLException | InterruptedException | IOException | ParseException ex) {
                                 Logger.getLogger(ClientInfoController.class.
                                         getName()).
                                         log(Level.SEVERE,
@@ -490,27 +453,7 @@ public class ClientInfoView extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(null,
                                     "El cliente se encuentra a paz y salvo");
                         }
-                    } catch (IOException ex) {
-                        Logger.getLogger(ClientInfoController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(ClientInfoController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ClientInfoController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(ClientInfoController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (InterruptedException ex) {
+                    } catch (IOException | ClassNotFoundException | SQLException | ParseException | InterruptedException ex) {
                         Logger.getLogger(ClientInfoController.class.getName()).
                                 log(Level.SEVERE,
                                         null,
@@ -540,6 +483,7 @@ public class ClientInfoView extends javax.swing.JFrame {
 
     public void setInfoData()
             throws ParseException {
+        MainController.authenticate(sessionKey);
         controller.getCurrentClient().
                 update();
         nameLabel.
@@ -580,6 +524,7 @@ public class ClientInfoView extends javax.swing.JFrame {
     }
 
     private void setHistoryTable(boolean showAllDebts) {
+        MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         List<Debt> debts;
         debts = controller.getCurrentClient().
@@ -666,7 +611,8 @@ public class ClientInfoView extends javax.swing.JFrame {
             }
         }
 
-        DefaultTableModel model = new DefaultTableModel(
+        DefaultTableModel model;
+        model = new DefaultTableModel(
                 objectMatrix,
                 new String[]{
                     "Deuda ($)",
@@ -684,6 +630,7 @@ public class ClientInfoView extends javax.swing.JFrame {
                 false
             };
 
+            @Override
             public boolean isCellEditable(int rowIndex,
                     int columnIndex) {
                 return canEdit[columnIndex];
@@ -738,6 +685,7 @@ public class ClientInfoView extends javax.swing.JFrame {
     }
 
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         payButton.requestFocus();
     }
 

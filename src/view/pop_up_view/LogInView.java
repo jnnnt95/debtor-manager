@@ -1,21 +1,17 @@
 package view.pop_up_view;
 
 import control.LogInController;
-import java.awt.Color;
+import control.MainController;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -25,31 +21,21 @@ public class LogInView extends javax.swing.JFrame {
 
     Container contentPane;
     private boolean updated;
-    private LogInController controller;
-    private String sessionKey;
+    private final LogInController controller;
+    private final String sessionKey;
 
     /**
-     * Creates new form ClientInfo
+     * Creates new form LogInView
+     * @param controller
+     * @param sessionKey
      */
     public LogInView(LogInController controller, String sessionKey) {
         updated = false;
         this.controller = controller;
         this.sessionKey = sessionKey;
 
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
-
         initComponents();
-        setLocationRelativeTo(null);
         userTextField.requestFocus();
-
-        ImageIcon iconLogo = new ImageIcon("Images/icon_mini.png");
     }
 
     @SuppressWarnings("unchecked")
@@ -164,6 +150,7 @@ public class LogInView extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if (!updated) {
             userTextField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -172,27 +159,7 @@ public class LogInView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.logIn();
-                        } catch (IOException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (InterruptedException ex) {
+                        } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                             Logger.getLogger(LogInController.class.getName()).
                                     log(Level.SEVERE,
                                             null,
@@ -208,27 +175,7 @@ public class LogInView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.logIn();
-                        } catch (IOException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (InterruptedException ex) {
+                        } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                             Logger.getLogger(LogInController.class.getName()).
                                     log(Level.SEVERE,
                                             null,
@@ -242,27 +189,7 @@ public class LogInView extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent arg0) {
                     try {
                         controller.logIn();
-                    } catch (IOException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ParseException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(LogInController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    } catch (InterruptedException ex) {
+                    } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                         Logger.getLogger(LogInController.class.getName()).
                                 log(Level.SEVERE,
                                         null,
@@ -277,27 +204,7 @@ public class LogInView extends javax.swing.JFrame {
                             == KeyEvent.VK_ENTER) {
                         try {
                             controller.logIn();
-                        } catch (IOException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ParseException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(LogInController.class.getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        } catch (InterruptedException ex) {
+                        } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                             Logger.getLogger(LogInController.class.getName()).
                                     log(Level.SEVERE,
                                             null,
@@ -311,29 +218,35 @@ public class LogInView extends javax.swing.JFrame {
     }
 
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         userTextField.requestFocus();
     }
 
     public String getUsername() {
+        MainController.authenticate(sessionKey);
         return userTextField.getText().
                 trim();
     }
 
     public String getPassword() {
+        MainController.authenticate(sessionKey);
         return passwordTextField.getText().
                 trim();
     }
 
     public void clear() {
+        MainController.authenticate(sessionKey);
         clearUsername();
         clearPassword();
     }
 
     private void clearUsername() {
+        MainController.authenticate(sessionKey);
         userTextField.setText("");
     }
 
     private void clearPassword() {
+        MainController.authenticate(sessionKey);
         userTextField.setText("");
     }
 

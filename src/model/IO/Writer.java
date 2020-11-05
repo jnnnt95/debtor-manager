@@ -27,7 +27,7 @@ import model.Debt;
  */
 public class Writer {
 
-    private static String rootDir = "Data";
+    private static final String ROOT_DIR = "Data";
 
     private Writer() {
 
@@ -37,7 +37,7 @@ public class Writer {
             throws WriteException,
             IOException {
         String path;
-        path = rootDir
+        path = ROOT_DIR
                 + "\\printable data.xls";
 
         WorkbookSettings configuration;

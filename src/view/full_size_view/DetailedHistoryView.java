@@ -4,9 +4,6 @@ import control.DetailedHistoryController;
 import control.MainController;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,27 +19,20 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class DetailedHistoryView extends javax.swing.JFrame {
 
-    private DetailedHistoryController controller;
+    private final DetailedHistoryController controller;
     private boolean updated;
-    private String sessionKey;
+    private final String sessionKey;
 
     /**
-     * Creates new form DisplayYearHistory
+     * Creates new form DetailedHistoryView
+     * @param controller
+     * @param sessionKey
      */
     public DetailedHistoryView(DetailedHistoryController controller, String sessionKey) {
         this.controller = controller;
         this.sessionKey = sessionKey;
 
-        setUndecorated(true);
-        this.setBackground(new Color(0, 0, 0, 180));
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-            }
-        });
         initComponents();
-        setLocationRelativeTo(null);
     }
 
     /**
@@ -383,6 +373,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void updateView() {
+        MainController.authenticate(sessionKey);
         if(!updated) {
         goBackButton.addActionListener(new AbstractAction() {
             @Override
@@ -403,6 +394,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     }
     
     public void displayChart() throws ParseException {
+        MainController.authenticate(sessionKey);
         chartPanel.removeAll();
 
         List<Integer> chartableMonthlyAmounts;
@@ -512,6 +504,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     }
 
     public void setMonthlyHistoryTableModel() {
+        MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         objectMatrix = new Object[controller.getMonthlyAmount().size()][2];
         
@@ -522,16 +515,18 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                     controller.getMonthlyDates().get(i).substring(3);
         }
         
-        DefaultTableModel model = new DefaultTableModel(
+        DefaultTableModel model;
+        model = new DefaultTableModel(
                 objectMatrix,
                 new String [] {
-                "Deuda ($)", "Fecha"
-            }
+                    "Deuda ($)", "Fecha"
+                }
         ) {
             boolean[] canEdit = new boolean [] {
                 false, false, false, false
             };
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
@@ -559,10 +554,12 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     }
     
     public void setTotalHistoryTable(TableModel model) {
+        MainController.authenticate(sessionKey);
         totalHistoryTable.setModel(model);
     }
     
     public void setMainElementFocus() {
+        MainController.authenticate(sessionKey);
         goBackButton.requestFocus();
     }
 }

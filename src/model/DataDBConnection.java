@@ -6,11 +6,11 @@ import java.sql.SQLException;
 
 public class DataDBConnection {
     private static Connection connection;
-    private static final String path = "Data\\debtor_manager_data.db";
+    private static final String PATH = "Data\\debtor_manager_data.db";
     
     private static void connect() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
-        connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+        connection = DriverManager.getConnection("jdbc:sqlite:" + PATH);
     }
     
     public static Connection getConnection() throws ClassNotFoundException, SQLException {

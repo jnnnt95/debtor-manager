@@ -38,6 +38,7 @@ public class MainController {
     private static DetailedHistoryController detailedHistory;
     private static PerformPaymentController performPayment;
     private static AddDebtController addDebt;
+    private static DepositClientsOnDateController depositClientsOnDate;
 
     private static User user;
     
@@ -52,7 +53,7 @@ public class MainController {
         setSessionKey();
 
         fullSizeViewport = new FullSizeMainView(sessionKey);
-        popUpSizeViewport = new PopUpMainView();
+        popUpSizeViewport = new PopUpMainView(sessionKey);
 
         fullSizeViewport.setPopUpSizeViewport(popUpSizeViewport);
         popUpSizeViewport.setFullSizeViewport(fullSizeViewport);
@@ -78,12 +79,14 @@ public class MainController {
         detailedHistory = new DetailedHistoryController(sessionKey);
         performPayment = new PerformPaymentController(sessionKey);
         addDebt = new AddDebtController(sessionKey);
+        depositClientsOnDate = new DepositClientsOnDateController(sessionKey);
 
         addClient.getView().mainContainer.setSize(popUpSizeDimension);
         modifyClient.getView().mainContainer.setSize(popUpSizeDimension);
         detailedHistory.getView().mainContainer.setSize(fullSizeDimension);
         performPayment.getView().mainContainer.setSize(popUpSizeDimension);
         addDebt.getView().mainContainer.setSize(popUpSizeDimension);
+        depositClientsOnDate.getView().mainContainer.setSize(fullSizeDimension);
 
         login();
     }
@@ -180,22 +183,7 @@ public class MainController {
         fullSizeViewport.setVisible(true);
         try {
             queryClient.update();
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        } catch (SQLException ex) {
+        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(MainController.class.getName()).
                     log(Level.SEVERE,
                             null,
@@ -226,16 +214,7 @@ public class MainController {
         try {
             queryClient = new QueryClientController(sessionKey);
             clientInfo = new ClientInfoController(sessionKey);
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(MainController.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
@@ -311,20 +290,18 @@ public class MainController {
         fullSizeViewport.changeToDetailedHistoryMode(detailedHistory.getView());
     }
 
+    public static void changeToDepositClientsOnDateMode(String sessionKey)
+            throws ParseException {
+        authenticate(sessionKey);
+        fullSizeViewport.changeToDepositClientsOnDateMode(depositClientsOnDate.getView());
+        depositClientsOnDate.setViewData();
+    }
+
     // -------------------- Pop Up Size View
     public static void changeToCreateClientMode(String sessionKey) {
         try {
             addClient.setReady();
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(MainController.class.getName()).
                     log(Level.SEVERE, null, ex);
         }

@@ -1,9 +1,7 @@
 package control;
 
-import model.Debt;
 import model.Client;
 import java.text.ParseException;
-import java.util.List;
 import view.full_size_view.ClientInfoView;
 
 /**
@@ -14,7 +12,6 @@ public class ClientInfoController {
 
     private final ClientInfoView view;
     private Client currentClient;
-    private List<Debt> debts;
     private final String sessionKey;
 
     public ClientInfoController(String sessionKey)
@@ -30,7 +27,6 @@ public class ClientInfoController {
         verifySession();
         client.sortDebts();
         this.currentClient = client;
-        this.debts = client.getDebts();
 
         view.setInfoData();
     }
