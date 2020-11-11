@@ -20,7 +20,7 @@ public class PerformPaymentController {
 
     private final PerformPaymentView view;
     private Client currentClient;
-    private String sessionKey;
+    private final String sessionKey;
 
     public PerformPaymentController(String sessionKey) {
         this.sessionKey = sessionKey;
@@ -51,11 +51,17 @@ public class PerformPaymentController {
                 try {
                     amount = Integer.parseInt(view.getNewDebtAmount());
                     if (amount <= 0) {
-                        throw new NumberFormatException();
+                        throw new NumberFormatException("debe ser mayor a cero");
+                    }
+                    if (amount > currentClient.getTotalNotPaidBalance()) {
+                        throw new NumberFormatException("es mayor a la deuda del cliente");
+                    }
+                    if ((amount % 50) != 0) {
+                        throw new NumberFormatException("revisar monto");
                     }
                     view.setVisible(false);
                     switch (JOptionPane.
-                            showConfirmDialog(null, "Se pagarán $" + MainController.
+                            showConfirmDialog(null, "Se cobrarán $" + MainController.
                                     formatAmount(amount) + "\n\n¿Continuar?")) {
                         case 0:
                             pay(amount);
@@ -73,19 +79,19 @@ public class PerformPaymentController {
                             break;
                         case 2:
                             JOptionPane.
-                                    showMessageDialog(null, "Pago cancelado");
+                                    showMessageDialog(null, "Cobro cancelado");
                             MainController.changeToClientInfoMode(currentClient,
                                     sessionKey);
                             break;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.
-                            showMessageDialog(null, "El valor ingresado no es válido");
+                            showMessageDialog(null, "El valor ingresado no es válido, " + e.getMessage());
                     view.setFocusOnAmount();
                 }
             } else {
                 JOptionPane.
-                        showMessageDialog(null, currentClient.getName() + " está a paz y salvo: no hay nada que pagar");
+                        showMessageDialog(null, currentClient.getName() + " está a paz y salvo: no hay nada que cobrar");
             }
         }
     }
@@ -94,6 +100,8 @@ public class PerformPaymentController {
         MainController.authenticate(sessionKey);
         String date;
         date = view.getNewDebtDate();
+        
+        Writer.recordPayment(currentClient.getId(), amount, date);
 
         for (Debt debt : currentClient.getDebts()) {
             if (!debt.isPaid() && amount > 0) {

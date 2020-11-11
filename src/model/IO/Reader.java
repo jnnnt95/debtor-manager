@@ -28,52 +28,23 @@ public class Reader {
     private static final String ROOT_DIR = "Data";
 
     public static ArrayList<String[]> getDepositClients(String date) throws ClassNotFoundException, SQLException {
-        
+
         ArrayList<String[]> depositClients;
         depositClients = new ArrayList<>();
         ResultSet rawDepositClients = getRawDepositClients(date);
 
         while (rawDepositClients.next()) {
-            String[] data = new String[4];
+            String[] data = new String[5];
             data[0] = rawDepositClients.getString(1);
             data[1] = rawDepositClients.getString(2);
             data[2] = rawDepositClients.getString(3);
             data[3] = rawDepositClients.getString(4);
+            data[4] = rawDepositClients.getString(5);
 
             depositClients.add(data);
         }
 
         return depositClients;
-    }
-
-    private static ResultSet getRawDepositClients(String date) throws ClassNotFoundException, SQLException {
-        String query;
-        query = 
-                  "SELECT "
-                + "client_name, "
-                + "client_nick, "
-                + "sum(debts.deposit), "
-                + "total_debt "
-                + "FROM "
-                + "(SELECT "
-                + "clients.id AS 'client_id', "
-                + "clients.name AS 'client_name', "
-                + "clients.nick AS 'client_nick', "
-                + "sum(debts.balance - debts.deposit) AS 'total_debt' "
-                + "FROM debts, clients "
-                + "WHERE clients.id = debts.id_client "
-                + "GROUP BY clients.id), debts "
-                + "WHERE "
-                + "(client_id = debts.id_client) "
-                + "AND (paid_date = '" + date + "' OR last_deposit_date = '" + date + "') "
-                + "GROUP BY client_id";
-
-        ResultSet result = DataDBConnection.
-                getConnection().
-                createStatement().
-                executeQuery(query);
-
-        return result;
     }
 
     private Reader() {
@@ -168,9 +139,7 @@ public class Reader {
                     //created by
                     rawDebts.getString(6),
                     //creator id
-                    rawDebts.getInt(7),
-                    //last deposit date
-                    rawDebts.getString(8)
+                    rawDebts.getInt(7)
             );
             debts.add(debt);
         }
@@ -228,8 +197,7 @@ public class Reader {
                 + "debts.date, "
                 + "debts.paid_date, "
                 + "users.name, "
-                + "debts.created_by, "
-                + "debts.last_deposit_date "
+                + "debts.created_by "
                 + "FROM "
                 + "debts, "
                 + "users "
@@ -304,6 +272,28 @@ public class Reader {
         return user;
     }
 
+    private static ResultSet getRawDepositClients(String date) throws ClassNotFoundException, SQLException {
+        String query;
+        query
+                = "SELECT client_name, client_nick, sum(deposits.amount) AS 'total_deposit_made', total_debt, users.name AS 'user_registered' "
+                + "FROM "
+                +   "("
+                +   "SELECT clients.id AS 'client_id', clients.name AS 'client_name', clients.nick AS 'client_nick', sum(debts.balance - debts.deposit) AS 'total_debt' "
+                +   "FROM debts, clients "
+                +   "WHERE clients.id = debts.id_client "
+                +   "GROUP BY clients.id"
+                +   "), "
+                +   "deposits, users "
+                + "WHERE (client_id = deposits.id_client) AND (date = '" + date + "') AND (users.id = deposits.received_by) GROUP BY client_id";
+
+        ResultSet result = DataDBConnection.
+                getConnection().
+                createStatement().
+                executeQuery(query);
+
+        return result;
+    }
+
     public static String getTodaysPaymentsBalance() throws ClassNotFoundException, SQLException {
         DecimalFormat amountFormater = new DecimalFormat("###,###.##");
         SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
@@ -323,8 +313,9 @@ public class Reader {
 
     private static ResultSet getTodaysPaymentsBalanceRawData(String date) throws ClassNotFoundException, SQLException {
         String query;
-        query = "SELECT SUM(debts.deposit - debts.previous_deposit_amount) FROM debts WHERE debts.last_deposit_date = '" + date.
-                trim() + "'";
+        query = "SELECT SUM(amount) "
+                + "FROM deposits WHERE deposits.date = '" + date.
+                        trim() + "'";
 
         Statement statement;
         statement = DataDBConnection.getConnection().

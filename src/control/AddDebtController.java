@@ -82,8 +82,10 @@ public class AddDebtController {
 
                 newDebtAmount = Integer.parseInt(view.getNewDebtAmount());
                 if (newDebtAmount <= 0) {
-                    JOptionPane.showMessageDialog(null, "Cantidad no válida");
-                    throw new NumberFormatException();
+                    throw new NumberFormatException("el monto debe ser mayor que cero");
+                }
+                if ((newDebtAmount % 50) != 0) {
+                    throw new NumberFormatException("revisar monto");
                 }
                 date = dateFormat.format(dateFormat.parse(view.getDate()));
 
@@ -101,8 +103,7 @@ public class AddDebtController {
                         MainController.getUser().
                                 getName(),
                         MainController.getUser().
-                                getId(),
-                        null
+                                getId()
                 );
                 Writer.addDebt(newDebt, currentClient);
                 currentClient.getDebts().
@@ -117,7 +118,7 @@ public class AddDebtController {
                 MainController.changeToClientInfoMode(currentClient,
                         sessionKey);
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Monto no válido");
+                JOptionPane.showMessageDialog(null, "Valor no válido, " + e.getMessage());
                 view.setFocusOnAmount();
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(null, "Fecha no válida");

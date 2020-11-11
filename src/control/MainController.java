@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.table.TableModel;
 import model.Client;
-import model.IO.Writer;
 import view.MainViews.FullSizeMainView;
 import view.pop_up_view.OmachiView;
 import view.MainViews.PopUpMainView;
@@ -49,7 +48,6 @@ public class MainController {
             ParseException,
             ClassNotFoundException,
             SQLException {
-        Writer.setDBPreviousAmount();
         setSessionKey();
 
         fullSizeViewport = new FullSizeMainView(sessionKey);

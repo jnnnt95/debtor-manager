@@ -31,6 +31,7 @@ public class ClientInfoView extends javax.swing.JFrame {
 
     /**
      * Creates new form ClientInfo
+     *
      * @param controller
      * @param sessionKey
      */
@@ -383,7 +384,8 @@ public class ClientInfoView extends javax.swing.JFrame {
                                     case 0:
                                         Writer.disableClient(controller.
                                                 getCurrentClient());
-                                        JOptionPane.showMessageDialog(null, "Cliente deshabilitado exitosamente");
+                                        JOptionPane.
+                                                showMessageDialog(null, "Cliente deshabilitado exitosamente");
                                         MainController.
                                                 changeToQueryClientMode(sessionKey);
                                         break;
@@ -408,31 +410,7 @@ public class ClientInfoView extends javax.swing.JFrame {
             toggleListButton.addActionListener(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (!showAllDebts) {
-                        toggleListButton.setText("Ver deudas pendientes");
-                        showAllDebts = true;
-                        try {
-                            setInfoData();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(ClientInfoController.class.
-                                    getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        }
-                    } else {
-                        toggleListButton.setText("Ver todas las deudas");
-                        showAllDebts = false;
-                        try {
-                            setInfoData();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(ClientInfoController.class.
-                                    getName()).
-                                    log(Level.SEVERE,
-                                            null,
-                                            ex);
-                        }
-                    }
+                    toggleTable();
                 }
             });
             payButton.addActionListener(new AbstractAction() {
@@ -481,9 +459,43 @@ public class ClientInfoView extends javax.swing.JFrame {
         }
     }
 
-    public void setInfoData()
-            throws ParseException {
+    public void toggleTable() {
+        
+        try {
+                setInfoData(1);
+            } catch (ParseException ex) {
+                Logger.getLogger(ClientInfoController.class.
+                        getName()).
+                        log(Level.SEVERE,
+                                null,
+                                ex);
+            }
+    }
+    
+    private void setToggleButtonText() {
+        if(showAllDebts) {
+            toggleListButton.setText("Mostrar deudas activas");
+        }
+        else {
+            toggleListButton.setText("Mostrar deudas históricas");
+        }
+    }
+    
+    private void setInfoData(int option) throws ParseException {
         MainController.authenticate(sessionKey);
+        //change from external 0: change table info to only active debts
+        //cange from internal 1 (or other): chane table info to previous selection
+        switch(option) {
+            case 0:
+                showAllDebts = false;
+                break;
+            default:
+                showAllDebts = !showAllDebts;
+                break;
+        }
+        
+        setToggleButtonText();
+        
         controller.getCurrentClient().
                 update();
         nameLabel.
@@ -523,13 +535,17 @@ public class ClientInfoView extends javax.swing.JFrame {
         setHistoryTable(showAllDebts);
     }
 
+    public void setInfoData()
+            throws ParseException {
+        setInfoData(0);
+    }
+
     private void setHistoryTable(boolean showAllDebts) {
         MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         List<Debt> debts;
         debts = controller.getCurrentClient().
                 getDebts();
-
         if (showAllDebts) {
             objectMatrix = new Object[debts.size()][5];
             for (int i = 0;

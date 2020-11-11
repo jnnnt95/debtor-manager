@@ -300,8 +300,7 @@ public class AddClientController {
                 MainController.getUser().
                         getName(),
                 MainController.getUser().
-                        getId(),
-                null
+                        getId()
         );
 
         return initialBalance;

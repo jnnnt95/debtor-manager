@@ -27,7 +27,7 @@ public class ClientInfoController {
         verifySession();
         client.sortDebts();
         this.currentClient = client;
-
+        
         view.setInfoData();
     }
 

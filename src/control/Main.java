@@ -44,7 +44,7 @@ public class Main {
                     == null) {
                 channel.close();
                 throw new RuntimeException(
-                        "El programa ya se está ejecutando...");
+                        "Debtor Manager ya se está ejecutando");
             }
             
             Thread shutdown = new Thread(new Runnable() {

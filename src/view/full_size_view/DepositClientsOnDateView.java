@@ -308,9 +308,9 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
         MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
 
-        ArrayList<String[]> data = controller.getDepositClients(getDate());
+        ArrayList<String[]>  data = controller.getDepositClients(getDate());
 
-        objectMatrix = new Object[data.size()][4];
+        objectMatrix = new Object[data.size()][5];
         for (int i = 0;
                 i
                 < data.size();
@@ -321,6 +321,7 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
                     parseInt(data.get(i)[2]));
             objectMatrix[i][3] = "$ " + MainController.formatAmount(Integer.
                     parseInt(data.get(i)[3]));
+            objectMatrix[i][4] = data.get(i)[4];
         }
 
         DefaultTableModel model;
@@ -330,10 +331,12 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
                     "Nombre",
                     "Nick",
                     "Cantidad pagada",
-                    "Saldo pendiente actual"
+                    "Saldo pendiente actual",
+                    "Registrado por"
                 }
         ) {
             boolean[] canEdit = new boolean[]{
+                false,
                 false,
                 false,
                 false,
@@ -347,6 +350,7 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
             }
 
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -386,6 +390,9 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
                     setResizable(false);
             depositClientsTable.getColumnModel().
                     getColumn(3).
+                    setResizable(false);
+            depositClientsTable.getColumnModel().
+                    getColumn(4).
                     setResizable(false);
         }
     }

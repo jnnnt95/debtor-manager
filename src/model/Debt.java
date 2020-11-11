@@ -15,7 +15,6 @@ public class Debt {
     private boolean paid;
     private final String createdBy;
     private final int creatorId;
-    private String lastDepositDate;
     
     public Debt(int id,
             int clientId,
@@ -24,8 +23,7 @@ public class Debt {
             String creationDate,
             String paidDate,
             String createdBy,
-            int creatorId,
-            String lastDepositdate) {
+            int creatorId) {
         this.id = id;
         this.clientId = clientId;
         this.balance = balance;
@@ -37,7 +35,6 @@ public class Debt {
         this.paidDate = paidDate;
         this.createdBy = createdBy;
         this.creatorId = creatorId;
-        this.lastDepositDate = lastDepositdate;
     }
     
     //Getters
@@ -87,18 +84,12 @@ public class Debt {
         this.paid =
                 this.totalDebt <= 0;
         
-        lastDepositDate = updateDate.trim();
-        
         if(this.paid) {
             this.paidDate = updateDate.trim();
         }
         else {
             this.paidDate = null;
         }
-    }
-
-    public String getLastDepositDate() {
-        return lastDepositDate;
     }
     
     public int getId() {

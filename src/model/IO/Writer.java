@@ -1,5 +1,6 @@
 package model.IO;
 
+import control.MainController;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,8 +16,6 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import model.Client;
 import model.DataDBConnection;
 import model.Debt;
@@ -31,6 +30,24 @@ public class Writer {
 
     private Writer() {
 
+    }
+
+    public static void recordPayment(int clientId, int amount, String date) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        connection = DataDBConnection.getConnection();
+
+        String query;
+        query = "INSERT INTO deposits "
+                + "(id_client, received_by, amount, date) "
+                + "VALUES ("
+                + clientId + ", "
+                + MainController.getUser().getId() + ", "
+                + amount + ", "
+                + "'" + date + "')";
+
+        Statement statement;
+        statement = connection.createStatement();
+        statement.execute(query);
     }
 
     public static void exportToExcel(Object[][] writableData)
@@ -259,11 +276,6 @@ public class Writer {
         query = "UPDATE debts "
                 + "SET deposit = "
                 + debt.getDeposit();
-        if (debt.getLastDepositDate()
-                != null) {
-            query += ", last_deposit_date = '"
-                    + debt.getLastDepositDate() + "'";
-        }
         if (debt.isPaid()) {
             query += ", paid_date = '"
                     + debt.getPaidDate()
@@ -299,26 +311,6 @@ public class Writer {
                 + " WHERE id = "
                 + client.getId();
 
-        Statement statement;
-        statement = connection.createStatement();
-
-        statement.execute(query);
-    }
-
-    public static void setDBPreviousAmount() throws ClassNotFoundException, SQLException {
-        SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
-
-        Date todayDate = new Date();
-        
-        Connection connection;
-        connection = DataDBConnection.getConnection();
-
-        String query;
-        query = "UPDATE debts "
-                + "SET previous_deposit_amount = deposit "
-                + "WHERE last_deposit_date != '"
-                + formater.format(todayDate).trim() + "'";
-        
         Statement statement;
         statement = connection.createStatement();
 

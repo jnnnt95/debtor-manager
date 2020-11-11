@@ -70,7 +70,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Realizar pago", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Realizar cobro", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel1.setOpaque(false);
 
         jLabel5.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
@@ -106,7 +106,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
         dateField.setText("dd/MM/aaaa");
 
         performPaymentButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        performPaymentButton.setText("Realizar pago");
+        performPaymentButton.setText("Realizar cobro");
         performPaymentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 performPaymentButtonActionPerformed(evt);
@@ -152,7 +152,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
                             .addComponent(amountField)
                             .addComponent(dateField)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 232, Short.MAX_VALUE)
+                        .addGap(0, 228, Short.MAX_VALUE)
                         .addComponent(performPaymentButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))

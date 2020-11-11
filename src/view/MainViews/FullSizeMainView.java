@@ -370,7 +370,7 @@ public final class FullSizeMainView
             createClientMenuItem.setVisible(true);
         }
         if(!depositClientsMenuItem.isVisible()) {
-            createClientMenuItem.setVisible(true);
+            depositClientsMenuItem.setVisible(true);
         }
         setContainerContent(queryClientView.mainContainer);
         queryClientView.setSearchFieldText("");
@@ -388,7 +388,7 @@ public final class FullSizeMainView
             createClientMenuItem.setVisible(true);
         }
         if(!depositClientsMenuItem.isVisible()) {
-            createClientMenuItem.setVisible(true);
+            depositClientsMenuItem.setVisible(true);
         }
         setContainerContent(clientInfoView.mainContainer);
         backToFullSize();
@@ -396,6 +396,16 @@ public final class FullSizeMainView
     }
 
     public void changeToDetailedHistoryMode(DetailedHistoryView detailedHistoryView) {
+        MainController.authenticate(sessionKey);
+        if (!queryClientsMenuItem.isVisible()) {
+            queryClientsMenuItem.setVisible(true);
+        }
+        if (!createClientMenuItem.isVisible()) {
+            createClientMenuItem.setVisible(true);
+        }
+        if(!depositClientsMenuItem.isVisible()) {
+            depositClientsMenuItem.setVisible(true);
+        }
         MainController.authenticate(sessionKey);
         setContainerContent(detailedHistoryView.mainContainer);
         backToFullSize();
