@@ -1,15 +1,9 @@
 package control;
 
 import model.Client;
-import java.awt.Color;
-import java.awt.Component;
 import model.IO.Reader;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.text.ParseException;
@@ -17,13 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-import jxl.write.WriteException;
-import model.IO.Writer;
 import view.full_size_view.QueryClientView;
 
 public class QueryClientController {
@@ -47,7 +34,11 @@ public class QueryClientController {
         verifySession();
         return view;
     }
-
+    
+    public void loginUpdate() {
+        view.loginUpdate();
+    }
+    
     public void setViewData() throws IOException, ParseException, ClassNotFoundException, SQLException {
         verifySession();
         update();

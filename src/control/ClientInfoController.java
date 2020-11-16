@@ -46,4 +46,8 @@ public class ClientInfoController {
     public Client getCurrentClient() {
         return currentClient;
     }
+    
+    public void loginUpdate() {
+        view.loginUpdate();
+    }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.JDesktopPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -32,6 +32,7 @@ public class QueryClientView
         extends javax.swing.JFrame {
 
     private boolean updated;
+    private boolean loginUpdated;
     private final QueryClientController controller;
     private final String sessionKey;
 
@@ -42,6 +43,7 @@ public class QueryClientView
      */
     public QueryClientView(QueryClientController controller, String sessionKey) {
         updated = false;
+        loginUpdated = false;
         this.controller = controller;
         this.sessionKey = sessionKey;
 
@@ -54,7 +56,7 @@ public class QueryClientView
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
@@ -83,11 +85,12 @@ public class QueryClientView
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Consultar cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Consultar cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel1.setText("<html><strong>Buscar</strong> <i>(ingresar nombre, nick o área)</i></html>:");
 
         searchTextField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
@@ -121,34 +124,33 @@ public class QueryClientView
         }
 
         showDefaultersButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        showDefaultersButton.setForeground(new java.awt.Color(255, 102, 102));
+        showDefaultersButton.setForeground(new java.awt.Color(255, 153, 153));
         showDefaultersButton.setText("Mostrar morosos");
+        showDefaultersButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        resetButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        resetButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         resetButton.setText("Mostrar todos");
+        resetButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        exportToExcelButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        exportToExcelButton.setForeground(new java.awt.Color(0, 153, 0));
+        exportToExcelButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        exportToExcelButton.setForeground(new java.awt.Color(102, 204, 255));
         exportToExcelButton.setText("Exportar a excel");
+        exportToExcelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel2.setText("Clientes en mora:");
 
-        defaulterCounterLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        defaulterCounterLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         defaulterCounterLabel.setForeground(new java.awt.Color(255, 102, 102));
         defaulterCounterLabel.setText("+++");
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Clientes con pago pendiente:");
 
-        debtorCounterLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        debtorCounterLabel.setForeground(new java.awt.Color(255, 255, 255));
+        debtorCounterLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         debtorCounterLabel.setText("+++");
 
-        jLabel4.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel4.setText("<html><i>Enter = buscar, Esc = restablecer</i></html>");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -158,46 +160,46 @@ public class QueryClientView
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 956, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(resetButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showDefaultersButton))
                     .addComponent(jSeparator1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(searchTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(defaulterCounterLabel)
-                            .addComponent(debtorCounterLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exportToExcelButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(resetButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(showDefaultersButton))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(searchTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(defaulterCounterLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(debtorCounterLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 615, Short.MAX_VALUE)
+                                .addComponent(exportToExcelButton)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(defaulterCounterLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(debtorCounterLabel)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(exportToExcelButton)))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(defaulterCounterLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(debtorCounterLabel)
+                    .addComponent(exportToExcelButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -215,34 +217,42 @@ public class QueryClientView
                 .addContainerGap())
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGap(0, 990, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 610, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -260,7 +270,7 @@ public class QueryClientView
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JButton resetButton;
     private javax.swing.JTable resultTable;
     private javax.swing.JTextField searchTextField;
@@ -299,24 +309,6 @@ public class QueryClientView
                     }
                 }
             });
-            if (MainController.getUser().
-                    getType() == UserType.administrator) {
-                exportToExcelButton.addActionListener(new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            exportToExcel();
-                            openExportedData();
-                        } catch (IOException | WriteException ex) {
-                            Logger.getLogger(QueryClientController.class.
-                                    getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
-                    }
-                });
-            } else {
-                exportToExcelButton.setVisible(false);
-            }
             resetButton.addActionListener(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -346,7 +338,7 @@ public class QueryClientView
         Reader.openExportedData();
     }
 
-    public JDesktopPane getMainContainer() {
+    public JPanel getMainContainer() {
         MainController.authenticate(sessionKey);
         return mainContainer;
     }
@@ -507,5 +499,29 @@ public class QueryClientView
             }
         };
         return model;
+    }
+    
+    public void loginUpdate() {
+        if(!loginUpdated) {
+            if (MainController.getUser().
+                    getType() == UserType.administrator) {
+                exportToExcelButton.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            exportToExcel();
+                            openExportedData();
+                        } catch (IOException | WriteException ex) {
+                            Logger.getLogger(QueryClientController.class.
+                                    getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            } else {
+                exportToExcelButton.setVisible(false);
+            }
+            loginUpdated = true;
+        }
     }
 }

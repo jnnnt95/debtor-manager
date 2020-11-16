@@ -25,6 +25,7 @@ import model.enums.OperationCode;
 public class ClientInfoView extends javax.swing.JFrame {
 
     private boolean updated;
+    private boolean loginUpdated;
     private final ClientInfoController controller;
     private final String sessionKey;
     private boolean showAllDebts;
@@ -37,6 +38,7 @@ public class ClientInfoView extends javax.swing.JFrame {
      */
     public ClientInfoView(ClientInfoController controller, String sessionKey) {
         updated = false;
+        loginUpdated = false;
         showAllDebts = false;
         this.controller = controller;
         this.sessionKey = sessionKey;
@@ -49,7 +51,7 @@ public class ClientInfoView extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         nameLabelTitle = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
@@ -86,45 +88,45 @@ public class ClientInfoView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información de cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+        mainContainer.setForeground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información de cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        nameLabelTitle.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        nameLabelTitle.setForeground(new java.awt.Color(255, 255, 255));
+        nameLabelTitle.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         nameLabelTitle.setText("Nombre:");
 
         nameLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        nameLabel.setForeground(new java.awt.Color(255, 255, 255));
         nameLabel.setText("+++");
 
-        nickLabelTitle.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        nickLabelTitle.setForeground(new java.awt.Color(255, 255, 255));
+        nickLabelTitle.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         nickLabelTitle.setText("Nick:");
 
         nickLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        nickLabel.setForeground(new java.awt.Color(255, 255, 255));
         nickLabel.setText("+++");
 
-        balanceLabelTitle.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        balanceLabelTitle.setForeground(new java.awt.Color(255, 255, 255));
+        balanceLabelTitle.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         balanceLabelTitle.setText("Saldo no pagado:");
 
-        nonPaidBalanceLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        nonPaidBalanceLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         nonPaidBalanceLabel.setForeground(new java.awt.Color(255, 153, 153));
         nonPaidBalanceLabel.setText("+++");
 
         payButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        payButton.setForeground(new java.awt.Color(0, 153, 0));
+        payButton.setForeground(new java.awt.Color(102, 204, 255));
         payButton.setText("Realizar cobro");
+        payButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        addDebtButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        addDebtButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         addDebtButton.setText("Agregar deuda");
+        addDebtButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        toggleListButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        toggleListButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         toggleListButton.setText("Ver todas las deudas");
+        toggleListButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jLabel7.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel7.setText("Deudas:");
 
         historyTable.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
@@ -152,32 +154,32 @@ public class ClientInfoView extends javax.swing.JFrame {
             historyTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        defaultAmountTitleLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        defaultAmountTitleLabel.setForeground(new java.awt.Color(255, 255, 255));
+        defaultAmountTitleLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         defaultAmountTitleLabel.setText("Saldo en mora:");
 
-        defaultAmountLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        defaultAmountLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         defaultAmountLabel.setForeground(new java.awt.Color(255, 102, 102));
         defaultAmountLabel.setText("+++");
 
-        modifyClientButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        modifyClientButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         modifyClientButton.setText("Modificar cliente");
+        modifyClientButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        viewDetailedHistoryButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        viewDetailedHistoryButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         viewDetailedHistoryButton.setForeground(new java.awt.Color(67, 106, 137));
         viewDetailedHistoryButton.setText("Ver estadísticas de cliente");
+        viewDetailedHistoryButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        nickLabelTitle1.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        nickLabelTitle1.setForeground(new java.awt.Color(255, 255, 255));
+        nickLabelTitle1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         nickLabelTitle1.setText("Teléfono:");
 
         cpNumberLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        cpNumberLabel.setForeground(new java.awt.Color(255, 255, 255));
         cpNumberLabel.setText("+++");
 
-        disableClientButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        disableClientButton.setForeground(new java.awt.Color(255, 102, 102));
+        disableClientButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        disableClientButton.setForeground(new java.awt.Color(255, 153, 153));
         disableClientButton.setText("Deshabilitar cliente");
+        disableClientButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -198,10 +200,6 @@ public class ClientInfoView extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(nickLabelTitle)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(nickLabel))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(nameLabelTitle)
                                         .addGap(10, 10, 10)
                                         .addComponent(nameLabel))
@@ -217,56 +215,54 @@ public class ClientInfoView extends javax.swing.JFrame {
                                         .addComponent(balanceLabelTitle)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(nonPaidBalanceLabel)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 461, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 485, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                         .addComponent(modifyClientButton)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(viewDetailedHistoryButton))
-                                    .addComponent(disableClientButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jScrollPane1))
+                                    .addComponent(disableClientButton, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 942, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(toggleListButton)
-                            .addComponent(jLabel7))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(jLabel7)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(nickLabelTitle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(nickLabel)))
+                        .addGap(0, 795, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nameLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nameLabel)
+                    .addComponent(disableClientButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nickLabelTitle)
+                    .addComponent(nickLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nickLabelTitle1)
+                    .addComponent(cpNumberLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(balanceLabelTitle)
+                    .addComponent(nonPaidBalanceLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(nameLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(nameLabel))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(nickLabelTitle)
-                                    .addComponent(nickLabel))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nickLabelTitle1)
-                            .addComponent(cpNumberLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(balanceLabelTitle)
-                            .addComponent(nonPaidBalanceLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(defaultAmountTitleLabel)
-                            .addComponent(defaultAmountLabel))
-                        .addGap(7, 7, 7))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(viewDetailedHistoryButton)
-                            .addComponent(modifyClientButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(disableClientButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(viewDetailedHistoryButton)
+                        .addComponent(modifyClientButton))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(defaultAmountTitleLabel)
+                        .addComponent(defaultAmountLabel)))
+                .addGap(4, 4, 4)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
                 .addComponent(jLabel7)
@@ -283,34 +279,36 @@ public class ClientInfoView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 976, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 575, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -329,7 +327,7 @@ public class ClientInfoView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JButton modifyClientButton;
     public javax.swing.JLabel nameLabel;
     private javax.swing.JLabel nameLabelTitle;
@@ -370,43 +368,7 @@ public class ClientInfoView extends javax.swing.JFrame {
                             }
                         }
                     });
-            switch (MainController.getUser().
-                    getType()) {
-                case administrator:
-                    disableClientButton.addActionListener(new AbstractAction() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            try {
-                                int selection;
-                                selection = JOptionPane.
-                                        showConfirmDialog(null, "¿Deshabilitar cliente?");
-                                switch (selection) {
-                                    case 0:
-                                        Writer.disableClient(controller.
-                                                getCurrentClient());
-                                        JOptionPane.
-                                                showMessageDialog(null, "Cliente deshabilitado exitosamente");
-                                        MainController.
-                                                changeToQueryClientMode(sessionKey);
-                                        break;
-                                    case 1:
-                                    case 2:
-                                        break;
-                                }
-                            } catch (ClassNotFoundException | SQLException | InterruptedException | IOException | ParseException ex) {
-                                Logger.getLogger(ClientInfoController.class.
-                                        getName()).
-                                        log(Level.SEVERE,
-                                                null,
-                                                ex);
-                            }
-                        }
-                    });
-                    break;
-                case normal:
-                    disableClientButton.setVisible(false);
-                    break;
-            }
+            
             toggleListButton.addActionListener(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -704,5 +666,47 @@ public class ClientInfoView extends javax.swing.JFrame {
         MainController.authenticate(sessionKey);
         payButton.requestFocus();
     }
-
+    
+    public void loginUpdate() {
+        if(!loginUpdated) {
+            switch (MainController.getUser().
+                    getType()) {
+                case administrator:
+                    disableClientButton.addActionListener(new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            try {
+                                int selection;
+                                selection = JOptionPane.
+                                        showConfirmDialog(null, "¿Deshabilitar cliente?");
+                                switch (selection) {
+                                    case 0:
+                                        Writer.disableClient(controller.
+                                                getCurrentClient());
+                                        JOptionPane.
+                                                showMessageDialog(null, "Cliente deshabilitado exitosamente");
+                                        MainController.
+                                                changeToQueryClientMode(sessionKey);
+                                        break;
+                                    case 1:
+                                    case 2:
+                                        break;
+                                }
+                            } catch (ClassNotFoundException | SQLException | InterruptedException | IOException | ParseException ex) {
+                                Logger.getLogger(ClientInfoController.class.
+                                        getName()).
+                                        log(Level.SEVERE,
+                                                null,
+                                                ex);
+                            }
+                        }
+                    });
+                    break;
+                case normal:
+                    disableClientButton.setVisible(false);
+                    break;
+            }
+            loginUpdated = false;
+        }
+    }
 }

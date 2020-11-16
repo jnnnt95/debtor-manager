@@ -41,7 +41,7 @@ public class AddDebtView extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         clientLabel = new javax.swing.JLabel();
@@ -71,27 +71,25 @@ public class AddDebtView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Agregar deuda", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Agregar deuda", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel5.setText("Cliente:");
 
         clientLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        clientLabel.setForeground(new java.awt.Color(255, 255, 255));
         clientLabel.setText("+++");
 
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel6.setText("Saldo no pagado:");
 
-        totalNotPaidBalanceLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        totalNotPaidBalanceLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         totalNotPaidBalanceLabel.setForeground(new java.awt.Color(255, 102, 102));
         totalNotPaidBalanceLabel.setText("+++");
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Monto ($):");
 
         amountField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
@@ -103,25 +101,26 @@ public class AddDebtView extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel2.setText("Fecha:");
 
         dateField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         dateField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         dateField.setText("dd/MM/aaaa");
 
-        addDebtButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        addDebtButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         addDebtButton.setText("Agregar deuda");
+        addDebtButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         addDebtButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addDebtButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        cancelButton.setForeground(new java.awt.Color(255, 102, 102));
+        cancelButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        cancelButton.setForeground(new java.awt.Color(255, 153, 153));
         cancelButton.setText("Cancelar");
+        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -133,16 +132,18 @@ public class AddDebtView extends javax.swing.JFrame {
         warningLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         warningLabel.setText("!");
 
-        oneLessDayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        oneLessDayButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         oneLessDayButton.setText("<");
+        oneLessDayButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         oneLessDayButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 oneLessDayButtonActionPerformed(evt);
             }
         });
 
-        oneMoreDayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        oneMoreDayButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         oneMoreDayButton.setText(">");
+        oneMoreDayButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         oneMoreDayButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 oneMoreDayButtonActionPerformed(evt);
@@ -226,34 +227,42 @@ public class AddDebtView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 482, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 230, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -292,7 +301,7 @@ public class AddDebtView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JButton oneLessDayButton;
     private javax.swing.JButton oneMoreDayButton;
     private javax.swing.JLabel totalNotPaidBalanceLabel;

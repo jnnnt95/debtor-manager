@@ -40,7 +40,7 @@ public class ModifyClientView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
@@ -55,39 +55,39 @@ public class ModifyClientView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Modificar cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Modificar cliente", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel1.setText("Nombre:");
 
         nameTextField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel2.setText("Nick:");
 
         nickTextField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Área:");
 
-        modifyClientButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        modifyClientButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         modifyClientButton.setText("Modificar cliente");
+        modifyClientButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jLabel4.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel4.setText("Teléfono");
 
         cpNumberField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
 
         areaField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
 
-        cancelButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        cancelButton.setForeground(new java.awt.Color(255, 102, 102));
+        cancelButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        cancelButton.setForeground(new java.awt.Color(255, 153, 153));
         cancelButton.setText("Cancelar");
+        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -142,34 +142,42 @@ public class ModifyClientView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 477, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 232, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -184,7 +192,7 @@ public class ModifyClientView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JButton modifyClientButton;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField nickTextField;

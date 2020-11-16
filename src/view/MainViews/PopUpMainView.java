@@ -3,6 +3,7 @@ package view.MainViews;
 import control.MainController;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
+import javax.swing.JPanel;
 import view.pop_up_view.AddClientView;
 import view.pop_up_view.AddDebtView;
 import view.pop_up_view.LogInView;
@@ -97,7 +98,7 @@ public final class PopUpMainView extends javax.swing.JFrame {
         requestFocus();
     }
 
-    private void setContainerContent(JDesktopPane content) {
+    private void setContainerContent(JPanel content) {
         MainController.authenticate(sessionKey);
         if(!content.getSize().equals(container.getSize())) {
             content.setSize(MainController.getPopUpSizeDimension());

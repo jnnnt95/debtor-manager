@@ -1,5 +1,6 @@
 package control;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,7 +13,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import view.pop_up_view.LogInView;
 
 /**
@@ -31,7 +31,7 @@ public class Main {
             ClassNotFoundException,
             SQLException {
         try {
-            UIManager.setLookAndFeel(new NimbusLookAndFeel());
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
             instanceValidation = new File("Data/instanceValidation.dat");
             if (instanceValidation.exists()) {
                 instanceValidation.delete();
@@ -44,7 +44,7 @@ public class Main {
                     == null) {
                 channel.close();
                 throw new RuntimeException(
-                        "Debtor Manager ya se está ejecutando");
+                        "Debtor Manager ya se encuentra en ejecución");
             }
             
             Thread shutdown = new Thread(new Runnable() {

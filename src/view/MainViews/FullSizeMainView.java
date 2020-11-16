@@ -9,8 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import model.IO.Reader;
 import view.full_size_view.ClientInfoView;
 import view.full_size_view.DepositClientsOnDateView;
@@ -88,9 +88,11 @@ public final class FullSizeMainView
         );
 
         FileMenu.setText("Opciones");
+        FileMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         queryClientsMenuItem.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         queryClientsMenuItem.setText("Consultar clientes");
+        queryClientsMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         queryClientsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 queryClientsMenuItemActionPerformed(evt);
@@ -100,15 +102,18 @@ public final class FullSizeMainView
 
         createClientMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         createClientMenuItem.setText("Crear cliente");
+        createClientMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         FileMenu.add(createClientMenuItem);
         FileMenu.add(jSeparator1);
 
         aboutMenuItem.setFont(new java.awt.Font("Arial", 2, 13)); // NOI18N
         aboutMenuItem.setText("About...");
+        aboutMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         FileMenu.add(aboutMenuItem);
 
         exitMenuItem.setFont(new java.awt.Font("Arial", 2, 13)); // NOI18N
         exitMenuItem.setText("Salir");
+        exitMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         FileMenu.add(exitMenuItem);
 
         MenuBar.add(FileMenu);
@@ -117,23 +122,28 @@ public final class FullSizeMainView
 
         todaysPaymentsMenuItem.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         todaysPaymentsMenuItem.setText("Caja por cobros del día");
+        todaysPaymentsMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenu1.add(todaysPaymentsMenuItem);
 
         depositClientsMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         depositClientsMenuItem.setText("Clientes abonados");
+        depositClientsMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenu1.add(depositClientsMenuItem);
 
         businessMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         businessMenuItem.setText("Resumen de negocio");
+        businessMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenu1.add(businessMenuItem);
         jMenu1.add(jSeparator2);
 
         userInfoMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         userInfoMenuItem.setText("Información de usuario");
+        userInfoMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenu1.add(userInfoMenuItem);
 
         usersCredentialsMenuItem.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         usersCredentialsMenuItem.setText("Credenciales de usuarios");
+        usersCredentialsMenuItem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenu1.add(usersCredentialsMenuItem);
 
         MenuBar.add(jMenu1);
@@ -325,7 +335,7 @@ public final class FullSizeMainView
         usersCredentialsMenuItem.setVisible(false);
     }
     
-    private void setContainerContent(JDesktopPane content) {
+    private void setContainerContent(JPanel content) {
         MainController.authenticate(sessionKey);
         if(!content.getSize().equals(container.getSize())) {
             content.setSize(MainController.getFullSizeDimension());
@@ -374,9 +384,9 @@ public final class FullSizeMainView
         }
         setContainerContent(queryClientView.mainContainer);
         queryClientView.setSearchFieldText("");
-        queryClientView.setMainElementFocus();
         queryClientsMenuItem.setVisible(false);
         backToFullSize();
+        queryClientView.setMainElementFocus();
     }
     
     public void changeToClientInfoMode(ClientInfoView clientInfoView) {

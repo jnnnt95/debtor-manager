@@ -38,6 +38,7 @@ public class OmachiView extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         mainContainer.setBackground(new java.awt.Color(255, 255, 255));
 

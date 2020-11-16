@@ -42,7 +42,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         clientLabel = new javax.swing.JLabel();
@@ -70,43 +70,41 @@ public class PerformPaymentView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Realizar cobro", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Realizar cobro", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel5.setText("Cliente:");
 
         clientLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        clientLabel.setForeground(new java.awt.Color(255, 255, 255));
         clientLabel.setText("+++");
 
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel6.setText("Saldo no pagado:");
 
-        totalNotPaidBalanceLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        totalNotPaidBalanceLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         totalNotPaidBalanceLabel.setForeground(new java.awt.Color(255, 102, 102));
         totalNotPaidBalanceLabel.setText("+++");
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Monto ($):");
 
         amountField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         amountField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         amountField.setText("$");
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel2.setText("Fecha:");
 
         dateField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         dateField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         dateField.setText("dd/MM/aaaa");
 
-        performPaymentButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        performPaymentButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         performPaymentButton.setText("Realizar cobro");
+        performPaymentButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         performPaymentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 performPaymentButtonActionPerformed(evt);
@@ -118,9 +116,10 @@ public class PerformPaymentView extends javax.swing.JFrame {
         warningLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         warningLabel.setText("!");
 
-        cancelButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        cancelButton.setForeground(new java.awt.Color(255, 102, 102));
+        cancelButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        cancelButton.setForeground(new java.awt.Color(255, 153, 153));
         cancelButton.setText("Cancelar");
+        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -189,34 +188,42 @@ public class PerformPaymentView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 484, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 232, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -238,7 +245,7 @@ public class PerformPaymentView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JButton performPaymentButton;
     private javax.swing.JLabel totalNotPaidBalanceLabel;
     private javax.swing.JLabel warningLabel;

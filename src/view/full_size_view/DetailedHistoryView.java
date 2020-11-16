@@ -44,7 +44,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         notPaidBalanceLabel = new javax.swing.JLabel();
@@ -76,15 +76,17 @@ public class DetailedHistoryView extends javax.swing.JFrame {
         setBounds(new java.awt.Rectangle(0, 0, 500, 400));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Historia detallada", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Historia detallada", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Saldo no pagado:");
 
-        notPaidBalanceLabel.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        notPaidBalanceLabel.setForeground(new java.awt.Color(255, 102, 102));
+        notPaidBalanceLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        notPaidBalanceLabel.setForeground(new java.awt.Color(255, 153, 153));
         notPaidBalanceLabel.setText("+++");
 
         chartPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -94,28 +96,24 @@ public class DetailedHistoryView extends javax.swing.JFrame {
 
         historyPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jDesktopPane2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel1.setText("Nombre:");
 
         nameLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        nameLabel.setForeground(new java.awt.Color(255, 255, 255));
         nameLabel.setText("+++");
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel2.setText("Nick:");
 
         nickLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        nickLabel.setForeground(new java.awt.Color(255, 255, 255));
         nickLabel.setText("+++");
 
-        jLabel7.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel7.setText("Endeudamiento histórico:");
 
-        jLabel8.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel8.setText("Endeudamiento por mes:");
 
         totalHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -146,12 +144,10 @@ public class DetailedHistoryView extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(monthlyHistoryTable);
 
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel6.setText("Teléfono:");
 
         cpNumberLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        cpNumberLabel.setForeground(new java.awt.Color(255, 255, 255));
         cpNumberLabel.setText("+++");
 
         jDesktopPane2.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -192,7 +188,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                             .addGroup(jDesktopPane2Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
@@ -226,24 +222,24 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
-        historyPanel.add(jDesktopPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 940, 420));
+        historyPanel.add(jDesktopPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 950, 420));
 
         tabs.addTab("Historia", historyPanel);
 
-        jLabel4.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel4.setText("Promedio:");
 
+        meanLabel.setBackground(new java.awt.Color(0, 0, 0));
         meanLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        meanLabel.setForeground(new java.awt.Color(255, 255, 255));
         meanLabel.setText("+++");
 
+        stdDevUpLimLabel.setBackground(new java.awt.Color(0, 0, 0));
         stdDevUpLimLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        stdDevUpLimLabel.setForeground(new java.awt.Color(255, 255, 255));
         stdDevUpLimLabel.setText("+++");
 
-        jLabel9.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel9.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel9.setText("LSDE*:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -253,7 +249,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
+                    .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 954, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
@@ -287,60 +283,75 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                     .addComponent(jLabel9)))
         );
 
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel5.setText("*LSDE = límite superior de la desviación estándar");
 
         goBackButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         goBackButton.setForeground(new java.awt.Color(0, 102, 153));
         goBackButton.setText("Volver");
-
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        mainContainer.setLayer(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        mainContainer.setLayer(goBackButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        goBackButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        goBackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goBackButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainContainerLayout.createSequentialGroup()
+            .addGap(0, 982, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(mainContainerLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(goBackButton)
-                            .addComponent(jLabel5))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(mainContainerLayout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(goBackButton)
+                                .addComponent(jLabel5))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 646, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(goBackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6))
+            .addGap(0, 598, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel5)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(goBackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void goBackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_goBackButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel chartPanel;
@@ -361,7 +372,7 @@ public class DetailedHistoryView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     public javax.swing.JLabel meanLabel;
     private javax.swing.JTable monthlyHistoryTable;
     public javax.swing.JLabel nameLabel;

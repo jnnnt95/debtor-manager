@@ -40,7 +40,7 @@ public class MainController {
     private static DepositClientsOnDateController depositClientsOnDate;
 
     private static User user;
-    
+
     private static DecimalFormat amountFormater;
 
     public static void start()
@@ -67,11 +67,13 @@ public class MainController {
 
         loadingView.mainContainer.setSize(popUpSizeDimension);
         startLoading(sessionKey);
-        
+
         amountFormater = new DecimalFormat("###,###.##");
 
         login = new LogInController(sessionKey);
         login.getView().mainContainer.setSize(popUpSizeDimension);
+        queryClient = new QueryClientController(sessionKey);
+        clientInfo = new ClientInfoController(sessionKey);
         addClient = new AddClientController(sessionKey);
         modifyClient = new ModifyClientController(sessionKey);
         detailedHistory = new DetailedHistoryController(sessionKey);
@@ -85,6 +87,8 @@ public class MainController {
         performPayment.getView().mainContainer.setSize(popUpSizeDimension);
         addDebt.getView().mainContainer.setSize(popUpSizeDimension);
         depositClientsOnDate.getView().mainContainer.setSize(fullSizeDimension);
+        queryClient.getView().mainContainer.setSize(fullSizeDimension);
+        clientInfo.getView().mainContainer.setSize(fullSizeDimension);
 
         login();
     }
@@ -197,6 +201,9 @@ public class MainController {
         fullSizeViewport.setVisible(true);
 
         user = login.getUser();
+        
+        queryClient.loginUpdate();
+        clientInfo.loginUpdate();
 
         fullSizeViewport.updateView();
         switch (user.getType()) {
@@ -208,18 +215,7 @@ public class MainController {
                 fullSizeViewport.prepareViewForNormalUser();
                 break;
         }
-        
-        try {
-            queryClient = new QueryClientController(sessionKey);
-            clientInfo = new ClientInfoController(sessionKey);
-        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-        
-        queryClient.getView().mainContainer.setSize(fullSizeDimension);
-        clientInfo.getView().mainContainer.setSize(fullSizeDimension);
-        
+
         try {
             changeToQueryClientMode(sessionKey);
         } catch (IOException ex) {
@@ -291,7 +287,8 @@ public class MainController {
     public static void changeToDepositClientsOnDateMode(String sessionKey)
             throws ParseException {
         authenticate(sessionKey);
-        fullSizeViewport.changeToDepositClientsOnDateMode(depositClientsOnDate.getView());
+        fullSizeViewport.changeToDepositClientsOnDateMode(depositClientsOnDate.
+                getView());
         depositClientsOnDate.setViewData();
     }
 
@@ -310,10 +307,14 @@ public class MainController {
             Client currentClient) {
         authenticate(sessionKey);
         modifyClient.setCurrentClient(currentClient);
-        modifyClient.getView().setClientName(currentClient.getName());
-        modifyClient.getView().setClientNick(currentClient.getNick());
-        modifyClient.getView().setClientCPNumber(currentClient.getCPNumber());
-        modifyClient.getView().setClientArea(currentClient.getArea());
+        modifyClient.getView().
+                setClientName(currentClient.getName());
+        modifyClient.getView().
+                setClientNick(currentClient.getNick());
+        modifyClient.getView().
+                setClientCPNumber(currentClient.getCPNumber());
+        modifyClient.getView().
+                setClientArea(currentClient.getArea());
         popUpSizeViewport.changeToModifyClientMode(modifyClient.getView());
     }
 
@@ -339,28 +340,50 @@ public class MainController {
     private static void login() {
         popUpSizeViewport.login(login.getView());
     }
-    
+
     public static String formatAmount(int amount) {
         return amountFormater.format(amount);
     }
-    
+
     public static String getMonthName(String month) {
-        if(month.equals("01")) return "Ene";
-        if(month.equals("02")) return "Feb";
-        if(month.equals("03")) return "Mar";
-        if(month.equals("04")) return "Abr";
-        if(month.equals("05")) return "May";
-        if(month.equals("06")) return "Jun";
-        if(month.equals("07")) return "Jul";
-        if(month.equals("08")) return "Ago";
-        if(month.equals("09")) return "Sep";
-        if(month.equals("10")) return "Oct";
-        if(month.equals("11")) return "Nov";
-        if(month.equals("12")) return "Dic";
+        if (month.equals("01")) {
+            return "Ene";
+        }
+        if (month.equals("02")) {
+            return "Feb";
+        }
+        if (month.equals("03")) {
+            return "Mar";
+        }
+        if (month.equals("04")) {
+            return "Abr";
+        }
+        if (month.equals("05")) {
+            return "May";
+        }
+        if (month.equals("06")) {
+            return "Jun";
+        }
+        if (month.equals("07")) {
+            return "Jul";
+        }
+        if (month.equals("08")) {
+            return "Ago";
+        }
+        if (month.equals("09")) {
+            return "Sep";
+        }
+        if (month.equals("10")) {
+            return "Oct";
+        }
+        if (month.equals("11")) {
+            return "Nov";
+        }
+        if (month.equals("12")) {
+            return "Dic";
+        }
         return null;
     }
-    
-    
 
     public static boolean isNumberADigit(String s) {
         //returns true if argument s is a number

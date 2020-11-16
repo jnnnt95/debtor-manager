@@ -45,7 +45,7 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        mainContainer = new javax.swing.JDesktopPane();
+        mainContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         descriptionLabel = new javax.swing.JLabel();
         updateTableButton = new javax.swing.JButton();
@@ -70,15 +70,19 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Clientes abonados", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        mainContainer.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Clientes abonados", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 11))); // NOI18N
         jPanel1.setOpaque(false);
 
+        descriptionLabel.setBackground(new java.awt.Color(0, 0, 0));
         descriptionLabel.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        descriptionLabel.setForeground(new java.awt.Color(255, 255, 255));
         descriptionLabel.setText("Para el día [fecha] pagaron:");
 
-        updateTableButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        updateTableButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         updateTableButton.setText("Actualizar tabla");
+        updateTableButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         depositClientsTable.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         depositClientsTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -108,15 +112,17 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
         dateField.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         dateField.setText("fecha");
 
-        nameLabelTitle1.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
-        nameLabelTitle1.setForeground(new java.awt.Color(255, 255, 255));
+        nameLabelTitle1.setBackground(new java.awt.Color(0, 0, 0));
+        nameLabelTitle1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         nameLabelTitle1.setText("Ingresar otra fecha:");
 
-        removeOnedayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        removeOnedayButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         removeOnedayButton.setText("<");
+        removeOnedayButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        addOneDayButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
+        addOneDayButton.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         addOneDayButton.setText(">");
+        addOneDayButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         addOneDayButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addOneDayButtonActionPerformed(evt);
@@ -169,34 +175,42 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
                 .addGap(7, 7, 7))
         );
 
-        mainContainer.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 982, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         mainContainerLayout.setVerticalGroup(
             mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 586, Short.MAX_VALUE)
+            .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainContainerLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainContainer)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(mainContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -215,7 +229,7 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator2;
-    public javax.swing.JDesktopPane mainContainer;
+    public javax.swing.JPanel mainContainer;
     private javax.swing.JLabel nameLabelTitle1;
     private javax.swing.JButton removeOnedayButton;
     private javax.swing.JButton updateTableButton;
