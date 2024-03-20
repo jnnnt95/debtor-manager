@@ -263,7 +263,7 @@ public class AddClientController {
             ParseException,
             ClassNotFoundException,
             SQLException {
-        int newId;
+        /*int newId;
         newId = 0;
         List<Client> clients;
         clients = Reader.getClients();
@@ -276,6 +276,9 @@ public class AddClientController {
         }
         newId++;
         return newId;
+
+         */
+        return Reader.getNewClientId();
     }
 
     public AddClientView getView() {

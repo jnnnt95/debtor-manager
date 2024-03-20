@@ -378,17 +378,24 @@ public class ClientInfoView extends javax.swing.JFrame {
             payButton.addActionListener(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
+                    if (controller.getCurrentClient().getTotalNotPaidBalance() > 0) {
+                        MainController.
+                                changeToPerformPaymentMode(controller.
+                                                getCurrentClient(),
+                                        sessionKey);
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "El cliente se encuentra a paz y salvo");
+                    }
+
+                    /*
                     try {
-                        if (controller.getCurrentClient().
-                                getTotalNotPaidBalance()
-                                > 0) {
+                        if (controller.getCurrentClient().getTotalNotPaidBalance() > 0) {
                             MainController.
                                     changeToPerformPaymentMode(controller.
                                             getCurrentClient(),
                                             sessionKey);
-                            MainController.
-                                    executeOperation(OperationCode.updateQueryClientData,
-                                            sessionKey);
+                            MainController.executeOperation(OperationCode.updateQueryClientData, sessionKey);
                         } else {
                             JOptionPane.showMessageDialog(null,
                                     "El cliente se encuentra a paz y salvo");
@@ -399,6 +406,8 @@ public class ClientInfoView extends javax.swing.JFrame {
                                         null,
                                         ex);
                     }
+
+                     */
                 }
             });
             addDebtButton.addActionListener(new AbstractAction() {
@@ -686,7 +695,7 @@ public class ClientInfoView extends javax.swing.JFrame {
                                         JOptionPane.
                                                 showMessageDialog(null, "Cliente deshabilitado exitosamente");
                                         MainController.
-                                                changeToQueryClientMode(sessionKey);
+                                                changeToQueryClientModeWithHardUpdate(sessionKey);
                                         break;
                                     case 1:
                                     case 2:

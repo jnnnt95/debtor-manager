@@ -154,7 +154,7 @@ public class Reader {
         connection = DataDBConnection.getConnection();
 
         String query;
-        query = "SELECT MAX(id) FROM clients";
+        query = "SELECT MAX(id) from (SELECT MAX(id) id FROM clients union all SELECT MAX(id) id FROM disabled_clients)";
 
         PreparedStatement statement;
         statement = connection.prepareStatement(query);
@@ -162,8 +162,7 @@ public class Reader {
 
         result.next();
 
-        return result.getInt(1)
-                + 1;
+        return result.getInt(1) + 1;
     }
 
     public static int getNewDebtId()

@@ -106,6 +106,16 @@ public class QueryClientController {
         setDebtorInfoLabels();
     }
 
+    public void softUpdate() {
+        //setClients();
+        setSearchTable();
+        setDebtorInfoLabels();
+    }
+
+    private static void updateClient(Client client) {
+
+    }
+
     public void setDebtorInfoLabels() {
         int defaulterCounter;
         defaulterCounter = 0;

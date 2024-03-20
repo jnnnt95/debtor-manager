@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -215,9 +217,8 @@ public class MainController {
                 fullSizeViewport.prepareViewForNormalUser();
                 break;
         }
-
         try {
-            changeToQueryClientMode(sessionKey);
+            changeToQueryClientModeWithHardUpdate(sessionKey);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).
                     log(Level.SEVERE,
@@ -256,6 +257,8 @@ public class MainController {
 
     // -------------------- Change-to-methods
     // -------------------- Full Size View
+
+    private static boolean queryClientModeRequiresHardUpdate = true;
     public static void changeToQueryClientMode(String sessionKey)
             throws InterruptedException,
             IOException,
@@ -263,8 +266,21 @@ public class MainController {
             ClassNotFoundException,
             SQLException {
         authenticate(sessionKey);
-        queryClient.update();
+        if(queryClientModeRequiresHardUpdate) {
+            queryClient.update();
+        }
+        else {
+            queryClient.softUpdate();
+        }
+        queryClientModeRequiresHardUpdate = false;
         fullSizeViewport.changeToQueryClientMode(queryClient.getView());
+    }
+    public static void changeToQueryClientModeWithHardUpdate(String sessionKey) throws SQLException, IOException, ParseException, InterruptedException, ClassNotFoundException {
+        requestClientsHardUpdate();
+        changeToQueryClientMode(sessionKey);
+    }
+    public static void requestClientsHardUpdate() {
+        queryClientModeRequiresHardUpdate = true;
     }
 
     public static void changeToClientInfoMode(Client currentClient,
