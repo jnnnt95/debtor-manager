@@ -3,6 +3,7 @@ package model.IO;
 import control.MainController;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import jxl.Workbook;
@@ -19,6 +20,7 @@ import java.sql.Statement;
 import model.Client;
 import model.DataDBConnection;
 import model.Debt;
+import utils.Action;
 
 /**
  *
@@ -26,36 +28,37 @@ import model.Debt;
  */
 public class Writer {
 
-    private static final String ROOT_DIR = "Data";
+    private Writer() {}
 
-    private Writer() {
+    public static void recordPayment(int clientId, int amount, String date) {
 
-    }
+        String query = "INSERT INTO deposits (id_client, received_by, amount, date) VALUES (?, ?, ?, ?)";
 
-    public static void recordPayment(int clientId, int amount, String date) throws ClassNotFoundException, SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, clientId);
+                stmt.setInt(2, MainController.getUser().getId());
+                stmt.setInt(3, amount);
+                stmt.setString(4, date);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
-        String query;
-        query = "INSERT INTO deposits "
-                + "(id_client, received_by, amount, date) "
-                + "VALUES ("
-                + clientId + ", "
-                + MainController.getUser().getId() + ", "
-                + amount + ", "
-                + "'" + date + "')";
-
-        Statement statement;
-        statement = connection.createStatement();
-        statement.execute(query);
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
     }
 
     public static void exportToExcel(Object[][] writableData)
             throws WriteException,
             IOException {
         String path;
-        path = ROOT_DIR
-                + "\\printable data.xls";
+        path = "Data\\printable data.xls";
 
         WorkbookSettings configuration;
         configuration = new WorkbookSettings();
@@ -202,125 +205,124 @@ public class Writer {
     public static void addClient(Client client)
             throws ClassNotFoundException,
             SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
 
-        String query;
-        query = "INSERT INTO clients "
-                + "(id, name, nick, cpnumber, area, created_by) "
-                + "VALUES ("
-                + client.getId()
-                + ", '"
-                + client.getName()
-                + "', '"
-                + client.getNick()
-                + "', '"
-                + client.getCPNumber()
-                + "', '"
-                + client.getArea()
-                + "', "
-                + client.getCreatorId()
-                + ")";
+        String query = "INSERT INTO clients (id, name, nick, cpnumber, area, created_by) VALUES (?, ?, ?, ?, ?, ?)";
 
-        Statement statement;
-        statement = connection.createStatement();
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, client.getId());
+                stmt.setString(2, client.getName());
+                stmt.setString(3, client.getNick());
+                stmt.setString(4, client.getCPNumber());
+                stmt.setString(5, client.getArea());
+                stmt.setInt(6, client.getCreatorId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
-        if (client.getDebts().
-                size()
-                > 0) {
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
+
+        if (!client.getDebts().isEmpty()) {
             addDebt(client.getDebts().
                     get(0),
                     client);
         }
-
-        statement.execute(query);
     }
 
-    public static void addDebt(Debt debt,
-            Client client)
-            throws ClassNotFoundException,
-            SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
+    public static void addDebt(Debt debt, Client client) {
 
-        String query;
-        query = "INSERT INTO debts "
+        String query = "INSERT INTO debts "
                 + "(id, id_client, balance, deposit, date, created_by) "
-                + "VALUES ("
-                + debt.getId()
-                + ", "
-                + client.getId()
-                + ", "
-                + debt.getBalance()
-                + ", "
-                + debt.getDeposit()
-                + ", '"
-                + debt.getCreationDate()
-                + "', "
-                + debt.getCreatorId()
-                + ")";
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        Statement statement;
-        statement = connection.createStatement();
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, debt.getId());
+                stmt.setInt(2, client.getId());
+                stmt.setInt(3, debt.getBalance());
+                stmt.setInt(4, debt.getDeposit());
+                stmt.setString(5, debt.getCreationDate());
+                stmt.setInt(6, debt.getCreatorId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
-        statement.execute(query);
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
     }
 
-    public static void modifyDebt(Debt debt)
-            throws ClassNotFoundException,
-            SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
+    public static void modifyDebt(Debt debt) {
 
-        String query;
-        query = "UPDATE debts "
-                + "SET deposit = "
-                + debt.getDeposit();
+        String query = "UPDATE debts SET deposit = ?";
         if (debt.isPaid()) {
-            query += ", paid_date = '"
-                    + debt.getPaidDate()
-                    + "'";
+            query += ", paid_date = ?";
         }
-        query += " WHERE id = "
-                + debt.getId();
-        
-        Statement statement;
-        statement = connection.createStatement();
+        query += " WHERE id = ?";
 
-        statement.execute(query);
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, debt.getDeposit());
+                if(debt.isPaid()) {
+                    stmt.setString(2, debt.getPaidDate());
+                    stmt.setInt(3, debt.getId());
+                } else {
+                    stmt.setInt(2, debt.getId());
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
     }
 
-    public static void modifyClient(Client client)
-            throws ParseException,
-            ClassNotFoundException,
-            SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
+    public static void modifyClient(Client client) {
 
-        String query;
-        query = "UPDATE clients "
-                + "SET name = '"
-                + client.getName()
-                + "', nick = '"
-                + client.getNick()
-                + "', cpnumber = '"
-                + client.getCPNumber()
-                + "', area = '"
-                + client.getArea()
-                + "'"
-                + " WHERE id = "
-                + client.getId();
+        String query = "UPDATE clients SET name = ?, nick = ?, cpnumber = ?, area = ?  WHERE id = ?";
 
-        Statement statement;
-        statement = connection.createStatement();
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
 
-        statement.execute(query);
+                stmt.setString(1, client.getName());
+                stmt.setString(2, client.getNick());
+                stmt.setString(3, client.getCPNumber());
+                stmt.setString(4, client.getArea());
+                stmt.setInt(5, client.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
     }
-    
-    public static void disableClient(Client client) throws ClassNotFoundException, SQLException {
-        Connection connection;
-        connection = DataDBConnection.getConnection();
-        
+
+    public static void disableClient(Client client) {
+
         int id = client.getId();
         String name = client.getName();
         String nick = client.getNick();
@@ -328,26 +330,45 @@ public class Writer {
         String CPNumber = client.getCPNumber();
         int createdBy = client.getCreatorId();
 
-        String query;
-        query = "INSERT INTO disabled_clients "
-                + "(id, name, nick, area, cpnumber, created_by) "
-                + "VALUES ("
-                + id + ", '"
-                + name + "', '"
-                + nick + "', '"
-                + area + "', '"
-                + CPNumber + "', "
-                + createdBy + ")";
-        
-        Statement statement;
-        statement = connection.createStatement();
+        String query = "INSERT INTO disabled_clients (id, name, nick, area, cpnumber, created_by) VALUES (?, ?, ?, ?, ?, ?)";
 
-        statement.execute(query);
-        
-        query = "DELETE FROM clients WHERE id = " + client.getId();
-        
-        statement = connection.createStatement();
+        Action preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, id);
+                stmt.setString(2, name);
+                stmt.setString(3, nick);
+                stmt.setString(4, area);
+                stmt.setString(5, CPNumber);
+                stmt.setInt(6, createdBy);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
-        statement.execute(query);
+        DBIO.UpdateBuilder dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
+
+        query = "DELETE FROM clients WHERE id = ?";
+
+        preparationAction = o -> {
+            PreparedStatement stmt = (PreparedStatement) o;
+            try {
+                stmt.setInt(1, client.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        dbop = new DBIO.UpdateBuilder();
+        dbop
+                .withPrepareAction(preparationAction)
+                .withQuery(query)
+                .setDone();
+        dbop.run();
     }
 }

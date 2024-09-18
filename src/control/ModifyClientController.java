@@ -96,10 +96,7 @@ public class ModifyClientController {
         else if(!isTextDataRight()) {
             return false;
         }
-        else if(!isCPNumberRight()) {
-            return false;
-        }
-        return true;
+        else return isCPNumberRight();
     }
     
     private boolean isTextDataRight() {

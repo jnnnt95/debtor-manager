@@ -14,7 +14,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+
+import model.Client;
 import model.Debt;
+import model.IO.Reader;
 import model.IO.Writer;
 import model.enums.OperationCode;
 
@@ -349,10 +352,17 @@ public class ClientInfoView extends javax.swing.JFrame {
                             controller.getCurrentClient());
                 }
             });
-            viewDetailedHistoryButton.
-                    addActionListener(new AbstractAction() {
+            viewDetailedHistoryButton.addActionListener(new AbstractAction() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                            Client client = controller.getCurrentClient();
+                            if(!client.hasAllDebts()) {
+                                try {
+                                    client.replaceDebtList(Reader.getClientAllDebts(client.getId()));
+                                } catch (IOException | ClassNotFoundException | SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
                             try {
                                 MainController.
                                         changeToDetailedHistoryMode(controller.
@@ -387,27 +397,6 @@ public class ClientInfoView extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null,
                                 "El cliente se encuentra a paz y salvo");
                     }
-
-                    /*
-                    try {
-                        if (controller.getCurrentClient().getTotalNotPaidBalance() > 0) {
-                            MainController.
-                                    changeToPerformPaymentMode(controller.
-                                            getCurrentClient(),
-                                            sessionKey);
-                            MainController.executeOperation(OperationCode.updateQueryClientData, sessionKey);
-                        } else {
-                            JOptionPane.showMessageDialog(null,
-                                    "El cliente se encuentra a paz y salvo");
-                        }
-                    } catch (IOException | ClassNotFoundException | SQLException | ParseException | InterruptedException ex) {
-                        Logger.getLogger(ClientInfoController.class.getName()).
-                                log(Level.SEVERE,
-                                        null,
-                                        ex);
-                    }
-
-                     */
                 }
             });
             addDebtButton.addActionListener(new AbstractAction() {
@@ -456,28 +445,19 @@ public class ClientInfoView extends javax.swing.JFrame {
         MainController.authenticate(sessionKey);
         //change from external 0: change table info to only active debts
         //cange from internal 1 (or other): chane table info to previous selection
-        switch(option) {
-            case 0:
-                showAllDebts = false;
-                break;
-            default:
-                showAllDebts = !showAllDebts;
-                break;
+        if (option == 0) {
+            showAllDebts = false;
+        } else {
+            showAllDebts = !showAllDebts;
         }
         
         setToggleButtonText();
         
-        controller.getCurrentClient().
-                update();
-        nameLabel.
-                setText(controller.getCurrentClient().
-                        getName());
-        nickLabel.
-                setText(controller.getCurrentClient().
-                        getNick());
+        controller.getCurrentClient().update();
+        nameLabel.setText(controller.getCurrentClient().getName());
+        nickLabel.setText(controller.getCurrentClient().getNick());
         if (!controller.getCurrentClient().
-                getCPNumber().
-                equals("")) {
+                getCPNumber().isEmpty()) {
             cpNumberLabel.
                     setText(controller.getCurrentClient().
                             getCPNumber());
@@ -515,8 +495,23 @@ public class ClientInfoView extends javax.swing.JFrame {
         MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         List<Debt> debts;
-        debts = controller.getCurrentClient().
-                getDebts();
+        Client client = controller.getCurrentClient();
+        if(!showAllDebts) {
+            debts = client.getDebts();
+        } else {
+            if(!client.hasAllDebts()) {
+                try {
+                    debts = Reader.getClientAllDebts(client.getId());
+                } catch (IOException | ClassNotFoundException | SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                client.replaceDebtList(debts);
+                client.setHasAllDebts();
+            } else {
+                debts = client.getDebts();
+            }
+        }
+
         if (showAllDebts) {
             objectMatrix = new Object[debts.size()][5];
             for (int i = 0;
@@ -598,44 +593,7 @@ public class ClientInfoView extends javax.swing.JFrame {
             }
         }
 
-        DefaultTableModel model;
-        model = new DefaultTableModel(
-                objectMatrix,
-                new String[]{
-                    "Deuda ($)",
-                    "Abono ($)",
-                    "Creada (d/m/a)",
-                    "Pagada (d/m/a)",
-                    "Registrada por"
-                }
-        ) {
-            boolean[] canEdit = new boolean[]{
-                false,
-                false,
-                false,
-                false,
-                false
-            };
-
-            @Override
-            public boolean isCellEditable(int rowIndex,
-                    int columnIndex) {
-                return canEdit[columnIndex];
-            }
-
-            Class[] types = new Class[]{
-                java.lang.Integer.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-        };
+        DefaultTableModel model = getDefaultTableModel(objectMatrix);
 
         historyTable.getTableHeader().
                 setResizingAllowed(false);
@@ -669,6 +627,48 @@ public class ClientInfoView extends javax.swing.JFrame {
                     getColumn(4).
                     setResizable(false);
         }
+    }
+
+    private static DefaultTableModel getDefaultTableModel(Object[][] objectMatrix) {
+        DefaultTableModel model;
+        model = new DefaultTableModel(
+                objectMatrix,
+                new String[]{
+                    "Deuda ($)",
+                    "Abono ($)",
+                    "Creada (d/m/a)",
+                    "Pagada (d/m/a)",
+                    "Registrada por"
+                }
+        ) {
+            boolean[] canEdit = new boolean[]{
+                false,
+                false,
+                false,
+                false,
+                false
+            };
+
+            @Override
+            public boolean isCellEditable(int rowIndex,
+                    int columnIndex) {
+                return canEdit[columnIndex];
+            }
+
+            Class[] types = new Class[]{
+                Integer.class,
+                String.class,
+                String.class,
+                String.class,
+                String.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+        return model;
     }
 
     public void setMainElementFocus() {

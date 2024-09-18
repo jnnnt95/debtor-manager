@@ -25,14 +25,14 @@ public class DetailedHistoryController {
     private final String sessionKey;
     
     
-    public DetailedHistoryController(String sessionKey) throws ParseException {
+    public DetailedHistoryController(String sessionKey) {
         this.sessionKey = sessionKey;
         view = new DetailedHistoryView(this, sessionKey);
         view.updateView();
         verifySession();
     }
     
-    public void setViewData(Client client, TableModel tableModel) throws ParseException {
+    public void setViewData(Client client, TableModel tableModel) {
         verifySession();
         this.currentClient = client;
         monthlyDates = client.getMonthlyDates();
@@ -45,7 +45,7 @@ public class DetailedHistoryController {
         view.historyPanel.setOpaque(false);
         view.nameLabel.setText(client.getName());
         view.nickLabel.setText(client.getNick());
-        if(!client.getCPNumber().equals("")) {
+        if(!client.getCPNumber().isEmpty()) {
             view.cpNumberLabel.setText(client.getCPNumber());
         }
         else {
@@ -68,18 +68,14 @@ public class DetailedHistoryController {
     public List<Integer> setChartableMonthlyAmounts() {
         List<Integer> chartableMonthlyAmounts;
         chartableMonthlyAmounts =  new ArrayList<>();
-        for(int amount: monthlyAmount) {
-            chartableMonthlyAmounts.add(amount);
-        }
+        chartableMonthlyAmounts.addAll(monthlyAmount);
         return chartableMonthlyAmounts;
     }
 
     public List<String> setChartableMonthlyDates() {
         List<String> chartableMonthlyDates;
         chartableMonthlyDates = new ArrayList<>();
-        for(String date: monthlyDates) {
-            chartableMonthlyDates.add(date);
-        }
+        chartableMonthlyDates.addAll(monthlyDates);
         return chartableMonthlyDates;
     }
 

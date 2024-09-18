@@ -21,7 +21,7 @@ public class Client {
     private String nick;
     private String cpNumber;
     private String area;
-    private final List<Debt> debts;
+    private List<Debt> debts;
     private double mean;
     private double standardDeviation;
     private List<Integer> monthlyAmount;
@@ -30,8 +30,10 @@ public class Client {
     private boolean defaulter;
     private final String createdBy;
     private final int creatorId;
+    private boolean hasAllDebts;
     
-    public Client(int id,
+    public Client(
+            int id,
             String name,
             String nick,
             String cpNumber,
@@ -54,6 +56,7 @@ public class Client {
         this.createdBy = createdBy;
         this.creatorId = creatorId;
         setDefaultAmount();
+        this.hasAllDebts = false;
     }
 
     public String getCreatedBy() {
@@ -283,5 +286,96 @@ public class Client {
         setMean();
         setStandardDeviation();
         setDefaultAmount();
+    }
+
+    public void setHasAllDebts() {
+        this.hasAllDebts = true;
+    }
+
+    public boolean hasAllDebts() {
+        return hasAllDebts;
+    }
+
+    public void replaceDebtList(List<Debt> newDebts) {
+        this.debts = newDebts;
+        try {
+            update();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static class ClientBuilder {
+        private int id;
+        private String name;
+        private String nick;
+        private String cpNumber;
+        private String area;
+        private List<Debt> debts;
+        private String createdBy;
+        private int creatorId;
+
+        private boolean done;
+
+        public ClientBuilder(){ this. done = false; };
+
+        public Client build() {
+            if(done) {
+                try {
+                    return new Client(
+                            id, name, nick, cpNumber, area, debts, createdBy, creatorId
+                    );
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException("Builder chain is not complete.");
+            }
+        }
+
+        public void setDone() {
+            this.done = true;
+        }
+
+        public ClientBuilder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public ClientBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ClientBuilder withNick(String nick) {
+            this.nick = nick;
+            return this;
+        }
+
+        public ClientBuilder withCpNumber(String cpNumber) {
+            this.cpNumber = cpNumber;
+            return this;
+        }
+
+        public ClientBuilder withArea(String area) {
+            this.area = area;
+            return this;
+
+        }
+
+        public ClientBuilder withDebts(List<Debt> debts) {
+            this.debts = debts;
+            return this;
+        }
+
+        public ClientBuilder withCreator(String createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        public ClientBuilder withCreatorId(int creatorId) {
+            this.creatorId = creatorId;
+            return this;
+        }
     }
 }

@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import jxl.write.WriteException;
 import model.Client;
+import model.ClientDataWithTotalizedDebts;
 import model.IO.Reader;
 import model.IO.Writer;
 import model.enums.UserType;
@@ -359,13 +360,13 @@ public class QueryClientView
         searchTextField.requestFocus();
     }
 
-    public void setNewModel(List<Client> matches) {
+    public void setNewModel(List<ClientDataWithTotalizedDebts> matches) {
         MainController.authenticate(sessionKey);
         resultTable.setModel(getNewResultTableModel(matches));
         setResultTableModelFormat(matches);
     }
 
-    private void setResultTableModelFormat(List<Client> matches) {
+    private void setResultTableModelFormat(List<ClientDataWithTotalizedDebts> matches) {
         MainController.authenticate(sessionKey);
         if (resultTable.getColumnModel().
                 getColumnCount()
@@ -431,13 +432,12 @@ public class QueryClientView
         }
     }
 
-    private DefaultTableModel getNewResultTableModel(List<Client> matches) {
+    private DefaultTableModel getNewResultTableModel(List<ClientDataWithTotalizedDebts> matches) {
         MainController.authenticate(sessionKey);
         Object[][] objectMatrix;
         objectMatrix = new Object[matches.size()][7];
 
-        for (int i = 0; i
-                < matches.size(); i++) {
+        for (int i = 0; i < matches.size(); i++) {
             objectMatrix[i][0] = matches.get(i).
                     getId();
             objectMatrix[i][1] = matches.get(i).
@@ -445,16 +445,19 @@ public class QueryClientView
             objectMatrix[i][2] = matches.get(i).
                     getName();
             objectMatrix[i][3] = matches.get(i).
-                    getCPNumber();
+                    getCpnumber();
             objectMatrix[i][4] = matches.get(i).
                     getArea();
             objectMatrix[i][5] = matches.get(i).
                     getCreatedBy();
             objectMatrix[i][6] = "$ "
-                    + MainController.formatAmount(matches.get(i).
-                            getTotalNotPaidBalance());
+                    + MainController.formatAmount(matches.get(i).getTotalizedDebts());
         }
 
+        return getDefaultTableModel(objectMatrix);
+    }
+
+    private static DefaultTableModel getDefaultTableModel(Object[][] objectMatrix) {
         DefaultTableModel model;
         model = new DefaultTableModel(
                 objectMatrix,
@@ -484,13 +487,13 @@ public class QueryClientView
             }
 
             Class[] types = new Class[]{
-                java.lang.Integer.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class
+                Integer.class,
+                String.class,
+                String.class,
+                String.class,
+                String.class,
+                String.class,
+                String.class
             };
 
             @Override
@@ -500,7 +503,7 @@ public class QueryClientView
         };
         return model;
     }
-    
+
     public void loginUpdate() {
         if(!loginUpdated) {
             if (MainController.getUser().

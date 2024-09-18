@@ -84,10 +84,7 @@ public class AddClientController {
             return false;
         } else if (!isCPNumberRight()) {
             return false;
-        } else if (!isAValidInitialBalance()) {
-            return false;
-        }
-        return true;
+        } else return isAValidInitialBalance();
     }
 
     private boolean isTextDataRight() {
@@ -120,8 +117,7 @@ public class AddClientController {
 
     private boolean isAValidInitialBalance() {
         int initialBalance;
-        initialBalance = 0;
-        if (view.getNewClientInitialBalance().length() > 0) {
+        if (!view.getNewClientInitialBalance().isEmpty()) {
             try {
                 initialBalance
                         = Integer.parseInt(view.getNewClientInitialBalance());
@@ -258,27 +254,12 @@ public class AddClientController {
         }
     }
 
-    private int getNewId()
-            throws IOException,
-            ParseException,
-            ClassNotFoundException,
-            SQLException {
-        /*int newId;
-        newId = 0;
-        List<Client> clients;
-        clients = Reader.getClients();
-        for (Client client
-                : clients) {
-            if (client.getId()
-                    > newId) {
-                newId = client.getId();
-            }
+    private int getNewId() {
+        try {
+            return Reader.getNewClientId();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        newId++;
-        return newId;
-
-         */
-        return Reader.getNewClientId();
     }
 
     public AddClientView getView() {

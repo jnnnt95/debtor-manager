@@ -47,12 +47,7 @@ public class Main {
                         "Debtor Manager ya se encuentra en ejecución");
             }
             
-            Thread shutdown = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    unlock();
-                }
-            });
+            Thread shutdown = new Thread(Main::unlock);
             
             Runtime.getRuntime().addShutdownHook(shutdown);
             
@@ -67,7 +62,7 @@ public class Main {
             System.exit(0);
         }
         
-        MainController.start();
+        MainController.kickstart();
     }
 
     private static void unlock() {

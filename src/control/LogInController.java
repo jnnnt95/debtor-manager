@@ -46,8 +46,7 @@ public class LogInController {
         user = Reader.getUser(username, password);
         
         if (user != null) {
-            MainController.executeOperation(OperationCode.launchApplication,
-                    sessionKey);
+            MainController.executeOperation(OperationCode.launchApplication, sessionKey);
             username = null;
             password = null;
             view.clear();

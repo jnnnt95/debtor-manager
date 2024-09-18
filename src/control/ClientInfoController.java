@@ -31,10 +31,6 @@ public class ClientInfoController {
         view.setInfoData();
     }
 
-    public void modifyClient()
-            throws ParseException {
-    }
-
     public ClientInfoView getView() {
         return view;
     }

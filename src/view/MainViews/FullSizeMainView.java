@@ -217,12 +217,8 @@ public final class FullSizeMainView
                     int option;
                     option = JOptionPane.showConfirmDialog(null,
                             "¿Salir de Debtor Manager?");
-                    switch (option) {
-                        case 0:
-                            System.exit(0);
-                            break;
-                        default:
-                            break;
+                    if (option == 0) {
+                        System.exit(0);
                     }
                 }
             });

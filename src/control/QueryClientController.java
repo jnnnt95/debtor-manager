@@ -1,6 +1,7 @@
 package control;
 
 import model.Client;
+import model.ClientDataWithTotalizedDebts;
 import model.IO.Reader;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ public class QueryClientController {
         activeClient = null;
         son = new ClientInfoController(sessionKey);
         initView();
+        clients = new ArrayList<>();
     }
 
     public QueryClientView getView() {
@@ -44,34 +46,64 @@ public class QueryClientController {
         update();
     }
 
-    public void setClients() throws IOException, ParseException, ClassNotFoundException, SQLException {
-        clients = Reader.getClients();
-    }
-
     private void initView() throws IOException, ParseException, ClassNotFoundException, SQLException {
         update();
     }
 
-    public void setSearchTable() {
-        List<Client> matches;
-        matches = new ArrayList<>();
 
-        for (Client client : clients) {
-            if (removeDiacriticalMarks(client.getName()).
+    public void setSearchTable() {
+        List<ClientDataWithTotalizedDebts> matches = new ArrayList<>();
+        List<ClientDataWithTotalizedDebts> clientsData;
+
+        try {
+            clientsData = Reader.getClientDataWithTotalizedDebts();
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (ClientDataWithTotalizedDebts clientData : clientsData) {
+            if (removeDiacriticalMarks(clientData.getName()).
                     toUpperCase().
                     contains(removeDiacriticalMarks(view.getSearchFieldText().
                             toUpperCase()))
-                    || removeDiacriticalMarks(client.getNick().
+                    || removeDiacriticalMarks(clientData.getNick().
+                    toUpperCase()).
+                    contains(removeDiacriticalMarks(view.
+                            getSearchFieldText().
+                            toUpperCase()))
+                    || removeDiacriticalMarks(clientData.getArea().
+                    toUpperCase()).
+                    contains(removeDiacriticalMarks(view.
+                            getSearchFieldText().
+                            toUpperCase()))) {
+                matches.add(clientData);
+            }
+        }
+
+        setClientsAsResult(matches);
+    }
+
+
+
+    public void setSearchTable(List<ClientDataWithTotalizedDebts> clientsData) {
+        List<ClientDataWithTotalizedDebts> matches = new ArrayList<>();
+
+        for (ClientDataWithTotalizedDebts clientData : clientsData) {
+            if (removeDiacriticalMarks(clientData.getName()).
+                    toUpperCase().
+                    contains(removeDiacriticalMarks(view.getSearchFieldText().
+                            toUpperCase()))
+                    || removeDiacriticalMarks(clientData.getNick().
                             toUpperCase()).
                             contains(removeDiacriticalMarks(view.
                                     getSearchFieldText().
                                     toUpperCase()))
-                    || removeDiacriticalMarks(client.getArea().
+                    || removeDiacriticalMarks(clientData.getArea().
                             toUpperCase()).
                             contains(removeDiacriticalMarks(view.
                                     getSearchFieldText().
                                     toUpperCase()))) {
-                matches.add(client);
+                matches.add(clientData);
             }
         }
 
@@ -79,19 +111,25 @@ public class QueryClientController {
     }
 
     public void showDefaulters() {
-        List<Client> matches;
-        matches = new ArrayList<>();
+        List<ClientDataWithTotalizedDebts> all;
+        List<ClientDataWithTotalizedDebts> matches = new ArrayList<>();
 
-        for (Client client : clients) {
-            if (client.isDefaulter()) {
-                matches.add(client);
+        try {
+            all = Reader.getClientDataWithTotalizedDebts();
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (ClientDataWithTotalizedDebts clientData : all) {
+            if (clientData.isDefaulter()) {
+                matches.add(clientData);
             }
         }
 
         setClientsAsResult(matches);
     }
 
-    private void setClientsAsResult(List<Client> matches) {
+    private void setClientsAsResult(List<ClientDataWithTotalizedDebts> matches) {
         view.setNewModel(matches);
     }
 
@@ -100,34 +138,47 @@ public class QueryClientController {
                 replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
-    public void update() throws IOException, ParseException, ClassNotFoundException, SQLException {
-        setClients();
-        setSearchTable();
-        setDebtorInfoLabels();
+    public void update() {
+
+        List<ClientDataWithTotalizedDebts> clientsData;
+
+        try {
+            clientsData = Reader.getClientDataWithTotalizedDebts();
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        setSearchTable(clientsData);
+        setDebtorInfoLabels(clientsData);
+
     }
 
     public void softUpdate() {
-        //setClients();
-        setSearchTable();
-        setDebtorInfoLabels();
+
+        List<ClientDataWithTotalizedDebts> clientsData;
+
+        try {
+            clientsData = Reader.getClientDataWithTotalizedDebts();
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        setSearchTable(clientsData);
+        setDebtorInfoLabels(clientsData);
     }
 
-    private static void updateClient(Client client) {
-
-    }
-
-    public void setDebtorInfoLabels() {
+    public void setDebtorInfoLabels(List<ClientDataWithTotalizedDebts> clientsData) {
         int defaulterCounter;
         defaulterCounter = 0;
 
         int debtorCounter;
         debtorCounter = 0;
 
-        for (Client client : clients) {
-            if (client.isDefaulter()) {
+        for (ClientDataWithTotalizedDebts clientData : clientsData) {
+            if (clientData.isDefaulter()) {
                 defaulterCounter++;
             }
-            if (client.getTotalNotPaidBalance()
+            if (clientData.getTotalizedDebts()
                     > 0) {
                 debtorCounter++;
             }
@@ -140,30 +191,31 @@ public class QueryClientController {
     }
 
     public Object[][] getClientsData() {
-        Object[][] clientsData;
-        clientsData = new String[clients.size()][6];
+        Object[][] clientsPrintableData;
+        List<ClientDataWithTotalizedDebts> clientsData;
 
-        for (int i = 0; i
-                < clientsData.length; i++) {
-            clientsData[i][0] = clients.get(i).
-                    getNick();
-            clientsData[i][1] = clients.get(i).
-                    getName();
-            clientsData[i][2] = clients.get(i).
-                    getCPNumber();
-            clientsData[i][3] = clients.get(i).
-                    getArea();
-            clientsData[i][4] = String.valueOf(clients.get(i).
-                    getTotalNotPaidBalance());
-            if (clients.get(i).
-                    isDefaulter()) {
-                clientsData[i][5] = "*";
+        try {
+            clientsData = Reader.getClientDataWithTotalizedDebts();
+        } catch (IOException | ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        clientsPrintableData = new String[clientsData.size()][6];
+
+        for (int i = 0; i < clientsPrintableData.length; i++) {
+            clientsPrintableData[i][0] = clientsData.get(i).getNick();
+            clientsPrintableData[i][1] = clientsData.get(i).getName();
+            clientsPrintableData[i][2] = clientsData.get(i).getCpnumber();
+            clientsPrintableData[i][3] = clientsData.get(i).getArea();
+            clientsPrintableData[i][4] = String.valueOf(clientsData.get(i).getTotalizedDebts());
+            if (clientsData.get(i).isDefaulter()) {
+                clientsPrintableData[i][5] = "*";
             } else {
-                clientsData[i][5] = "";
+                clientsPrintableData[i][5] = "";
             }
         }
 
-        return clientsData;
+        return clientsPrintableData;
     }
 
     private void verifySession() {
@@ -171,22 +223,26 @@ public class QueryClientController {
     }
 
     public void updateActiveClient(int clientId) {
-        for (int i = 0;
-                i
-                < clients.size();
-                i++) {
-            if (clientId
-                    == clients.get(i).
-                            getId()) {
+        clients.remove(null);
+        activeClient = null;
+
+        for (int i = 0; i < clients.size(); i++) {
+            if (clientId == clients.get(i).getId()) {
                 activeClient = clients.get(i);
             }
         }
 
-        clients.remove(null);
+        if(activeClient == null) {
+            try {
+                activeClient = Reader.getClientById(clientId);
+                clients.add(activeClient);
+            } catch (IOException | ParseException | ClassNotFoundException | SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         try {
-            MainController.changeToClientInfoMode(activeClient,
-                    sessionKey);
+            MainController.changeToClientInfoMode(activeClient, sessionKey);
         } catch (ParseException ex) {
             Logger.getLogger(QueryClientController.class.
                     getName()).

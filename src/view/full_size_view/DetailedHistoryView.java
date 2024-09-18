@@ -525,7 +525,21 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                     ", " +
                     controller.getMonthlyDates().get(i).substring(3);
         }
-        
+
+        DefaultTableModel model = getDefaultTableModel(objectMatrix);
+        if (monthlyHistoryTable.getColumnModel().
+                getColumnCount() > 0) {
+            monthlyHistoryTable.getColumnModel().
+                    getColumn(0).
+                    setResizable(false);
+            monthlyHistoryTable.getColumnModel().
+                    getColumn(1).
+                    setResizable(false);
+        }
+        monthlyHistoryTable.setModel(model);
+    }
+
+    private static DefaultTableModel getDefaultTableModel(Object[][] objectMatrix) {
         DefaultTableModel model;
         model = new DefaultTableModel(
                 objectMatrix,
@@ -541,10 +555,10 @@ public class DetailedHistoryView extends javax.swing.JFrame {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
-                        
+
             Class[] types = new Class [] {
-                java.lang.Integer.class,
-                java.lang.String.class
+                Integer.class,
+                String.class
             };
 
             @Override
@@ -552,18 +566,9 @@ public class DetailedHistoryView extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         };
-        if (monthlyHistoryTable.getColumnModel().
-                getColumnCount() > 0) {
-            monthlyHistoryTable.getColumnModel().
-                    getColumn(0).
-                    setResizable(false);
-            monthlyHistoryTable.getColumnModel().
-                    getColumn(1).
-                    setResizable(false);
-        }
-        monthlyHistoryTable.setModel(model);
+        return model;
     }
-    
+
     public void setTotalHistoryTable(TableModel model) {
         MainController.authenticate(sessionKey);
         totalHistoryTable.setModel(model);

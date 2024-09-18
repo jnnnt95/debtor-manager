@@ -60,5 +60,65 @@ public class User {
         return name;
     }
     
-    
+    public static class UserBuilder {
+        private int id;
+        private String username;
+        private String phone;
+        private String dateCreated;
+        private String type;
+        private String name;
+
+        private boolean done;
+
+        public UserBuilder() {}
+
+        public User build() {
+            if(done) {
+                return new User(
+                        id,
+                        username,
+                        phone,
+                        dateCreated,
+                        type,
+                        name
+                );
+            } else {
+                throw new RuntimeException("Builder no preparado para crear usuario.");
+            }
+        }
+
+        public UserBuilder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder withUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder withPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public UserBuilder withDateCreated(String dateCreated) {
+            this.dateCreated = dateCreated;
+            return this;
+        }
+
+        public UserBuilder withType(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public UserBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public void setDone() {
+            this.done = true;
+        }
+    }
 }

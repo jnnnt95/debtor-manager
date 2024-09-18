@@ -205,7 +205,7 @@ public class LogInView extends javax.swing.JFrame {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     try {
-                        controller.logIn();
+                        loginAction();
                     } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                         Logger.getLogger(LogInController.class.getName()).
                                 log(Level.SEVERE,
@@ -220,7 +220,7 @@ public class LogInView extends javax.swing.JFrame {
                     if (event.getKeyCode()
                             == KeyEvent.VK_ENTER) {
                         try {
-                            controller.logIn();
+                            loginAction();
                         } catch (IOException | ParseException | ClassNotFoundException | SQLException | InterruptedException ex) {
                             Logger.getLogger(LogInController.class.getName()).
                                     log(Level.SEVERE,
@@ -232,6 +232,18 @@ public class LogInView extends javax.swing.JFrame {
             });
             updated = true;
         }
+    }
+
+    private void loginAction() throws SQLException, IOException, ParseException, ClassNotFoundException, InterruptedException {
+        logInButton.setEnabled(false);
+        userTextField.setEnabled(false);
+        passwordTextField.setEnabled(false);
+
+        controller.logIn();
+
+        logInButton.setEnabled(true);
+        userTextField.setEnabled(true);
+        passwordTextField.setEnabled(true);
     }
 
     public void setMainElementFocus() {

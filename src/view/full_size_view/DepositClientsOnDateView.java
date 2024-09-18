@@ -338,44 +338,7 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
             objectMatrix[i][4] = data.get(i)[4];
         }
 
-        DefaultTableModel model;
-        model = new DefaultTableModel(
-                objectMatrix,
-                new String[]{
-                    "Nombre",
-                    "Nick",
-                    "Cantidad pagada",
-                    "Saldo pendiente actual",
-                    "Registrado por"
-                }
-        ) {
-            boolean[] canEdit = new boolean[]{
-                false,
-                false,
-                false,
-                false,
-                false
-            };
-
-            @Override
-            public boolean isCellEditable(int rowIndex,
-                    int columnIndex) {
-                return canEdit[columnIndex];
-            }
-
-            Class[] types = new Class[]{
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class,
-                java.lang.String.class
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-        };
+        DefaultTableModel model = getDefaultTableModel(objectMatrix);
 
         depositClientsTable.getTableHeader().
                 setResizingAllowed(false);
@@ -409,6 +372,48 @@ public class DepositClientsOnDateView extends javax.swing.JFrame {
                     getColumn(4).
                     setResizable(false);
         }
+    }
+
+    private static DefaultTableModel getDefaultTableModel(Object[][] objectMatrix) {
+        DefaultTableModel model;
+        model = new DefaultTableModel(
+                objectMatrix,
+                new String[]{
+                    "Nombre",
+                    "Nick",
+                    "Cantidad pagada",
+                    "Saldo pendiente actual",
+                    "Registrado por"
+                }
+        ) {
+            boolean[] canEdit = new boolean[]{
+                false,
+                false,
+                false,
+                false,
+                false
+            };
+
+            @Override
+            public boolean isCellEditable(int rowIndex,
+                    int columnIndex) {
+                return canEdit[columnIndex];
+            }
+
+            Class[] types = new Class[]{
+                String.class,
+                String.class,
+                String.class,
+                String.class,
+                String.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+        return model;
     }
 
     public void setMainElementFocus() {

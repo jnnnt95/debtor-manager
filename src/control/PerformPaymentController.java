@@ -47,7 +47,7 @@ public class PerformPaymentController {
         MainController.authenticate(sessionKey);
         if (noFieldsEmpty()) {
             if (currentClient.getTotalNotPaidBalance() > 0) {
-                Integer amount;
+                int amount;
                 try {
                     amount = Integer.parseInt(view.getNewDebtAmount());
                     if (amount <= 0) {

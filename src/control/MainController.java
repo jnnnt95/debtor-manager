@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,11 +43,12 @@ public class MainController {
 
     private static DecimalFormat amountFormater;
 
-    public static void start()
+    public static void kickstart()
             throws IOException,
             ParseException,
             ClassNotFoundException,
             SQLException {
+
         setSessionKey();
 
         fullSizeViewport = new FullSizeMainView(sessionKey);
@@ -58,8 +57,6 @@ public class MainController {
         fullSizeViewport.setPopUpSizeViewport(popUpSizeViewport);
         popUpSizeViewport.setFullSizeViewport(fullSizeViewport);
 
-        loadingView = new OmachiView();
-
         fullSizeDimension = new Dimension(
                 fullSizeViewport.container.getSize().width,
                 fullSizeViewport.container.getSize().height);
@@ -67,13 +64,23 @@ public class MainController {
                 popUpSizeViewport.container.getSize().width,
                 popUpSizeViewport.container.getSize().height);
 
-        loadingView.mainContainer.setSize(popUpSizeDimension);
-        startLoading(sessionKey);
+        login = new LogInController(sessionKey);
+        login.getView().mainContainer.setSize(popUpSizeDimension);
+
+
+        login();
+
+    }
+
+    public static void start() throws
+            SQLException,
+            IOException,
+            ParseException,
+            ClassNotFoundException
+    {
 
         amountFormater = new DecimalFormat("###,###.##");
 
-        login = new LogInController(sessionKey);
-        login.getView().mainContainer.setSize(popUpSizeDimension);
         queryClient = new QueryClientController(sessionKey);
         clientInfo = new ClientInfoController(sessionKey);
         addClient = new AddClientController(sessionKey);
@@ -91,13 +98,11 @@ public class MainController {
         depositClientsOnDate.getView().mainContainer.setSize(fullSizeDimension);
         queryClient.getView().mainContainer.setSize(fullSizeDimension);
         clientInfo.getView().mainContainer.setSize(fullSizeDimension);
-
-        login();
     }
 
     private static void setSessionKey() {
-        String sessionKeyPlaceholder;
-        sessionKeyPlaceholder = "";
+        StringBuilder sessionKeyPlaceholder;
+        sessionKeyPlaceholder = new StringBuilder();
 
         Random randomizer;
         randomizer = new Random();
@@ -112,25 +117,22 @@ public class MainController {
                 case 0:
                     currentCharacter = (char) (65
                             + randomizer.nextInt(26));
-                    sessionKeyPlaceholder = sessionKeyPlaceholder
-                            + String.valueOf(currentCharacter);
+                    sessionKeyPlaceholder.append(currentCharacter);
                     break;
                 case 1:
                     currentCharacter = (char) (97
                             + randomizer.nextInt(26));
-                    sessionKeyPlaceholder = sessionKeyPlaceholder
-                            + String.valueOf(currentCharacter);
+                    sessionKeyPlaceholder.append(currentCharacter);
                     break;
                 case 2:
                     currentCharacter = (char) (33
                             + randomizer.nextInt(32));
-                    sessionKeyPlaceholder = sessionKeyPlaceholder
-                            + String.valueOf(currentCharacter);
+                    sessionKeyPlaceholder.append(currentCharacter);
                     break;
             }
         }
 
-        sessionKey = sessionKeyPlaceholder;
+        sessionKey = sessionKeyPlaceholder.toString();
     }
 
     public static void authenticate(String sessionKeyToVerify) {
@@ -185,18 +187,18 @@ public class MainController {
         popUpSizeViewport.setVisible(false);
         fullSizeViewport.setEnabled(true);
         fullSizeViewport.setVisible(true);
-        try {
-            queryClient.update();
-        } catch (IOException | ParseException | ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(MainController.class.getName()).
-                    log(Level.SEVERE,
-                            null,
-                            ex);
-        }
+        queryClient.update();
     }
 
     private static void launch()
             throws InterruptedException {
+
+        try {
+            start();
+        } catch (SQLException | IOException | ParseException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         popUpSizeViewport.setDefaultCloseOperation(
                 WindowConstants.DO_NOTHING_ON_CLOSE);
         popUpSizeViewport.setVisible(false);
@@ -295,8 +297,7 @@ public class MainController {
             TableModel tableModel,
             String sessionKey)
             throws ParseException {
-        detailedHistory.setViewData(currentClient,
-                tableModel);
+        detailedHistory.setViewData(currentClient, tableModel);
         fullSizeViewport.changeToDetailedHistoryMode(detailedHistory.getView());
     }
 
@@ -362,79 +363,52 @@ public class MainController {
     }
 
     public static String getMonthName(String month) {
-        if (month.equals("01")) {
-            return "Ene";
-        }
-        if (month.equals("02")) {
-            return "Feb";
-        }
-        if (month.equals("03")) {
-            return "Mar";
-        }
-        if (month.equals("04")) {
-            return "Abr";
-        }
-        if (month.equals("05")) {
-            return "May";
-        }
-        if (month.equals("06")) {
-            return "Jun";
-        }
-        if (month.equals("07")) {
-            return "Jul";
-        }
-        if (month.equals("08")) {
-            return "Ago";
-        }
-        if (month.equals("09")) {
-            return "Sep";
-        }
-        if (month.equals("10")) {
-            return "Oct";
-        }
-        if (month.equals("11")) {
-            return "Nov";
-        }
-        if (month.equals("12")) {
-            return "Dic";
+        switch (month) {
+            case "01":
+                return "Ene";
+            case "02":
+                return "Feb";
+            case "03":
+                return "Mar";
+            case "04":
+                return "Abr";
+            case "05":
+                return "May";
+            case "06":
+                return "Jun";
+            case "07":
+                return "Jul";
+            case "08":
+                return "Ago";
+            case "09":
+                return "Sep";
+            case "10":
+                return "Oct";
+            case "11":
+                return "Nov";
+            case "12":
+                return "Dic";
         }
         return null;
     }
 
     public static boolean isNumberADigit(String s) {
         //returns true if argument s is a number
-        if (s.equals("0")) {
-            return true;
+        switch (s) {
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                return true;
         }
-        if (s.equals("1")) {
-            return true;
-        }
-        if (s.equals("2")) {
-            return true;
-        }
-        if (s.equals("3")) {
-            return true;
-        }
-        if (s.equals("4")) {
-            return true;
-        }
-        if (s.equals("5")) {
-            return true;
-        }
-        if (s.equals("6")) {
-            return true;
-        }
-        if (s.equals("7")) {
-            return true;
-        }
-        if (s.equals("8")) {
-            return true;
-        }
-        if (s.equals("9")) {
-            return true;
-        }
+        return false;
 
         //returns false if argument s is not a number
-        return false;
     }
 }

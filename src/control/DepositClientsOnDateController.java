@@ -40,10 +40,6 @@ public class DepositClientsOnDateController {
         view.setInfoData(view.getDate());
     }
 
-    public void modifyClient()
-            throws ParseException {
-    }
-
     public DepositClientsOnDateView getView() {
         return view;
     }
